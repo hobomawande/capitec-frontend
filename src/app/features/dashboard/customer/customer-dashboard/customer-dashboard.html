@@ -1,0 +1,48 @@
+<div class="welcome-header">
+  <h1>Welcome, {{ firstName }}</h1>
+  <p>Manage your Capitec appointments online.</p>
+
+  <a mat-flat-button
+     color="primary"
+     routerLink="/customer/appointments/book">
+    <mat-icon>add</mat-icon>
+    Make an Appointment
+  </a>
+</div>
+
+<div class="stats-grid">
+
+  <mat-card>
+    <mat-icon>calendar_month</mat-icon>
+    <p>Total Appointments</p>
+    <h2>{{ totalAppointments() }}</h2>
+  </mat-card>
+
+  <mat-card>
+    <mat-icon>event_available</mat-icon>
+    <p>Upcoming Appointments</p>
+    <h2>{{ upcomingAppointments() }}</h2>
+  </mat-card>
+
+</div>
+
+<mat-card class="quick-card">
+  <h3>Manage your appointments</h3>
+  <p>View your booking history or check your upcoming appointments.</p>
+
+  <a mat-button routerLink="/customer/appointments">
+    View My Appointments
+  </a>
+</mat-card>
+
+<mat-card class="quick-card">
+  <h3>Recent Appointments</h3>
+  <p>Manage and view the details of your bookings.</p>
+
+  <a mat-raised-button
+     color="primary"
+     routerLink="/customer/appointments">
+    <mat-icon>visibility</mat-icon>
+    View Appointment Details
+  </a>
+</mat-card>

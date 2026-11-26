@@ -20,7 +20,7 @@ export const routes: Routes = [
     path: 'dashboard',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/dashboard/dashboard').then((m) => m.Dashboard),
+      import('./features/dashboard/admin/dashboard').then((m) => m.AdminDashboardComponent),
   },
 
   // ADMIN ROUTES
@@ -32,9 +32,7 @@ export const routes: Routes = [
       {
         path: 'branches',
         loadComponent: () =>
-          import('./features/branches/branch-list/branch-list').then(
-            (m) => m.BranchList,
-          ),
+          import('./features/branches/branch-list/branch-list').then((m) => m.BranchListComponent),
       },
 
       {
@@ -49,7 +47,14 @@ export const routes: Routes = [
         path: 'appointments',
         loadComponent: () =>
           import('./features/appointments/appointment-list/appointment-list').then(
-            (m) => m.AppointmentList,
+            (m) => m.AppointmentListComponent,
+          ),
+      },
+      {
+        path: 'admin/appointments/:id',
+        loadComponent: () =>
+          import('./features/appointments/appointment-details/appointment-details').then(
+            (m) => m.AppointmentDetailsComponent,
           ),
       },
     ],
@@ -64,7 +69,7 @@ export const routes: Routes = [
         path: 'book',
         loadComponent: () =>
           import('./features/appointments/appointment-create/appointment-create').then(
-            (m) => m.AppointmentCreate,
+            (m) => m.AppointmentCreateComponent,
           ),
       },
 
@@ -72,7 +77,35 @@ export const routes: Routes = [
         path: 'my-appointments',
         loadComponent: () =>
           import('./features/appointments/appointment-list/appointment-list').then(
-            (m) => m.AppointmentList,
+            (m) => m.AppointmentListComponent,
+          ),
+      },
+      {
+        path: 'customer/appointments/:id',
+        loadComponent: () =>
+          import('./features/appointments/appointment-details/appointment-details').then(
+            (m) => m.AppointmentDetailsComponent,
+          ),
+      },
+      {
+        path: 'appointments',
+        loadComponent: () =>
+          import('././features/customer/appointments/customer-appointments/customer-appointments').then(
+            (m) => m.CustomerAppointmentsComponent,
+          ),
+      },
+      {
+        path: 'appointments/book',
+        loadComponent: () =>
+          import('././features/appointments/appointment-create/appointment-create').then(
+            (m) => m.AppointmentCreateComponent,
+          ),
+      },
+      {
+        path: 'appointments/:id',
+        loadComponent: () =>
+          import('././features/appointments/appointment-details/appointment-details').then(
+            (m) => m.AppointmentDetailsComponent,
           ),
       },
     ],

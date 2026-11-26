@@ -8,5 +8,5 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.html',
 })
 export class App {
-  protected readonly title = signal('capitec-appointment-ui');
+  protected readonly title = signal('Capitec appointment system');
 }

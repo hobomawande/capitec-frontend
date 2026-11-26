@@ -13,7 +13,7 @@ import { Appointment } from '../../../Models/appointment/Appointment';
   standalone: true,
   imports: [MatTableModule, MatButtonModule, MatChipsModule, MatIconModule],
   selector: 'app-appointment-list',
-  styleUrl: './appointment-list.scss',
+  styleUrl: './appointment-list.css',
   templateUrl: './appointment-list.html',
 })
 export class AppointmentListComponent implements OnInit {
@@ -44,7 +44,7 @@ export class AppointmentListComponent implements OnInit {
     this.loading.set(true);
 
     const request = this.isAdmin
-      ? this.appointmentService.getAll()
+      ? this.appointmentService.getAllAppointments()
       : this.appointmentService.getMyAppointments();
 
     request.subscribe({
@@ -62,7 +62,7 @@ export class AppointmentListComponent implements OnInit {
       return;
     }
 
-    this.appointmentService.cancel(appointment.id).subscribe({
+    this.appointmentService.cancelAppointment(appointment.id).subscribe({
       next: () => this.loadAppointments(),
     });
   }

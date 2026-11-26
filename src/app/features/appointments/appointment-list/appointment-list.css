@@ -1,0 +1,23 @@
+.table-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.empty-state {
+  padding: 60px 20px;
+  text-align: center;
+  color: #777;
+
+  mat-icon {
+    font-size: 45px;
+    width: 45px;
+    height: 45px;
+    color: #008653;
+  }
+}
