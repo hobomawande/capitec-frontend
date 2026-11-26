@@ -7,13 +7,13 @@ import { roleGuard } from './core/guards/role/guard';
 export const routes: Routes = [
   {
     path: 'login',
-    loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
+    loadComponent: () => import('./features/auth/login/login').then((m) => m.LoginComponent),
   },
 
   {
     path: 'register',
     loadComponent: () =>
-      import('./features/auth/register/register').then((m) => m.Register),
+      import('./features/auth/register/register').then((m) => m.RegisterComponent),
   },
 
   {
@@ -41,7 +41,7 @@ export const routes: Routes = [
         path: 'branches/create',
         loadComponent: () =>
           import('./features/branches/branch-create/branch-create').then(
-            (m) => m.BranchCreate,
+            (m) => m.BranchCreateComponent,
           ),
       },
 

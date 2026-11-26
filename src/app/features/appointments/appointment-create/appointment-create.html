@@ -1,1 +1,90 @@
-<p>appointment-create works!</p>
+<div class="page-header">
+  <h1>Make an Appointment</h1>
+  <p>Choose a branch and convenient appointment time</p>
+</div>
+
+<mat-card class="booking-card">
+
+  <form [formGroup]="bookingForm" (ngSubmit)="submit()">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Select Branch</mat-label>
+
+      <mat-select formControlName="branchId"
+                  (selectionChange)="dateChanged()">
+
+        @for (branch of branches; track branch.id) {
+          <mat-option [value]="branch.id">
+            {{ branch.branchName }} - {{ branch.city }}
+          </mat-option>
+        }
+
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Appointment Service</mat-label>
+
+      <mat-select formControlName="serviceName">
+        @for (service of services; track service) {
+          <mat-option [value]="service">
+            {{ service }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Appointment Date</mat-label>
+
+      <input matInput
+             [matDatepicker]="picker"
+             [min]="getMinDate()"
+             formControlName="appointmentDate"
+             (dateChange)="dateChanged()">
+
+      <mat-datepicker-toggle matIconSuffix [for]="picker" />
+      <mat-datepicker #picker />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Available Time</mat-label>
+
+      <mat-select formControlName="appointmentTime"
+                  [disabled]="loadingSlots || availableSlots.length === 0">
+
+        @for (slot of availableSlots; track slot) {
+          <mat-option [value]="slot">
+            {{ slot }}
+          </mat-option>
+        }
+
+      </mat-select>
+    </mat-form-field>
+
+    @if (loadingSlots) {
+      <mat-spinner diameter="30" />
+    }
+
+    @if (!loadingSlots &&
+    availableSlots.length === 0 &&
+    bookingForm.controls.appointmentDate.value) {
+      <p class="info-message">
+        No available appointments for this date.
+      </p>
+    }
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    <button mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="loading">
+      {{ loading ? 'Booking...' : 'Confirm Appointment' }}
+    </button>
+
+  </form>
+
+</mat-card>

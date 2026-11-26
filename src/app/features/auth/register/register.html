@@ -1,1 +1,55 @@
-<p>register works!</p>
+<div class="auth-container">
+
+  <mat-card class="auth-card">
+
+    <h2>Create Account</h2>
+    <p>Register for Capitec appointment booking</p>
+
+    <form [formGroup]="registerForm" (ngSubmit)="submit()">
+
+      <mat-form-field appearance="outline">
+        <mat-label>First Name</mat-label>
+        <input matInput formControlName="firstName">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Last Name</mat-label>
+        <input matInput formControlName="lastName">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Confirm Password</mat-label>
+        <input matInput type="password"
+               formControlName="confirmPassword">
+      </mat-form-field>
+
+      @if (errorMessage) {
+        <p class="error-message">{{ errorMessage }}</p>
+      }
+
+      <button mat-flat-button
+              type="submit"
+              [disabled]="loading">
+        {{ loading ? 'Registering...' : 'Create Account' }}
+      </button>
+
+    </form>
+
+    <p class="auth-footer">
+      Already registered?
+      <a routerLink="/login">Login</a>
+    </p>
+
+  </mat-card>
+
+</div>

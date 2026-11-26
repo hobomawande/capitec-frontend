@@ -1,0 +1,19 @@
+.booking-card {
+  max-width: 700px;
+  padding: 30px;
+  border-radius: 14px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.error-message {
+  color: #c62828;
+}
+
+.info-message {
+  color: #777;
+  font-size: 14px;
+}
