@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BranchService } from '../../../core/services/branch';
 import { AppointmentService } from '../../../core/services/appointment';
 import { Branch } from '../../../Models/branch/Branch';
+import { AvailableSlot } from '../../../Models/appointment/AvailableSlot';
 
 @Component({
   standalone: true,
@@ -34,7 +35,7 @@ import { Branch } from '../../../Models/branch/Branch';
 })
 export class AppointmentCreateComponent implements OnInit {
   branches: Branch[] = [];
-  availableSlots: string[] = [];
+  availableSlots: AvailableSlot[] = [];
 
   loading = false;
   loadingSlots = false;
@@ -65,7 +66,7 @@ export class AppointmentCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.branchService.getActive().subscribe({
+    this.branchService.getActiveBranches().subscribe({
       next: (data) => (this.branches = data),
       error: () => {
         this.errorMessage = 'Unable to load branches';
@@ -82,7 +83,7 @@ export class AppointmentCreateComponent implements OnInit {
     this.availableSlots = [];
 
     const branchId = this.bookingForm.controls.branchId.value;
-    const selectedDate = this.bookingForm.controls.appointmentDate.value;
+    const selectedDate : any = this.bookingForm.controls.appointmentDate.value;
 
     if (!branchId || !selectedDate) {
       return;
@@ -121,8 +122,8 @@ export class AppointmentCreateComponent implements OnInit {
 
     const value = this.bookingForm.getRawValue();
 
-    const date =
-      value.appointmentDate instanceof Date
+    // @ts-ignore
+    const date = value.appointmentDate instanceof Date
         ? this.formatDate(value.appointmentDate)
         : value.appointmentDate;
 
@@ -130,7 +131,7 @@ export class AppointmentCreateComponent implements OnInit {
     this.errorMessage = '';
 
     this.appointmentService
-      .create({
+      .createAppointment({
         ...value,
         appointmentDate: date,
       })

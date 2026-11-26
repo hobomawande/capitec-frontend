@@ -1,0 +1,220 @@
+
+<div class="appointments-container">
+
+  <div class="page-header">
+    <div>
+      <h1>My Appointments</h1>
+      <p>Manage your Capitec appointment bookings.</p>
+    </div>
+
+    <a mat-flat-button
+       color="primary"
+       routerLink="/customer/appointments/book">
+      <mat-icon>add</mat-icon>
+      Book Appointment
+    </a>
+  </div>
+
+  <!-- Appointment Statistics -->
+  <div class="stats-grid">
+
+    <mat-card class="stat-card">
+      <mat-icon>calendar_month</mat-icon>
+      <div>
+        <p>Total Appointments</p>
+        <h2>{{ appointments().length }}</h2>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-icon>event_available</mat-icon>
+      <div>
+        <p>Upcoming</p>
+        <h2>
+          {{
+            appointments().filter(a =>
+              a.appointmentDate >= (today.toString()) &&
+              a.status !== 'CANCELLED' &&
+              a.status !== 'COMPLETED'
+            ).length
+          }}
+        </h2>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-icon>check_circle</mat-icon>
+      <div>
+        <p>Completed</p>
+        <h2>
+          {{
+            appointments().filter(a =>
+              a.status === 'COMPLETED'
+            ).length
+          }}
+        </h2>
+      </div>
+    </mat-card>
+
+  </div>
+
+  <!-- Search and Filters -->
+  <mat-card class="filter-card">
+
+    <div class="filter-controls">
+
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+
+        <input
+          type="text"
+          placeholder="Search branch or reference..."
+          (input)="setSearch($any($event.target).value)"
+        />
+      </div>
+
+      <select
+        [value]="selectedFilter()"
+        (change)="setFilter($any($event.target).value)">
+
+        <option value="ALL">All Appointments</option>
+        <option value="UPCOMING">Upcoming</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="CANCELLED">Cancelled</option>
+
+      </select>
+
+    </div>
+
+  </mat-card>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <mat-card class="message-card">
+      <p>Loading your appointments...</p>
+    </mat-card>
+  }
+
+  <!-- Error -->
+  @if (errorMessage()) {
+    <mat-card class="message-card error-message">
+      <mat-icon color="warn">error</mat-icon>
+      <p>{{ errorMessage() }}</p>
+
+      <button mat-button
+              color="primary"
+              (click)="loadAppointments()">
+        Try Again
+      </button>
+    </mat-card>
+  }
+
+  <!-- Appointment List -->
+  @if (!loading() && !errorMessage()) {
+
+    <div class="appointment-list">
+
+      @for (appointment of filteredAppointments(); track appointment.id) {
+
+        <mat-card class="appointment-card">
+
+          <div class="appointment-header">
+
+            <div>
+              <h3>{{ appointment.branchName }}</h3>
+
+              <p class="reference">
+                Reference: {{ appointment.appointmentReference }}
+              </p>
+            </div>
+
+            <span
+              class="status-badge"
+              [ngClass]="getStatusClass(appointment.status)">
+              {{ appointment.status }}
+            </span>
+
+          </div>
+
+          <div class="appointment-info">
+
+            <div>
+              <mat-icon>calendar_month</mat-icon>
+              <span>
+                {{ appointment.appointmentDate | date:'mediumDate' }}
+              </span>
+            </div>
+
+            <div>
+              <mat-icon>schedule</mat-icon>
+              <span>{{ appointment.startTime }}</span>
+            </div>
+
+            <div>
+              <mat-icon>location_on</mat-icon>
+              <span>{{ appointment.province }}</span>
+            </div>
+
+          </div>
+
+          <div class="appointment-reason">
+            <strong>Reason:</strong>
+            {{ appointment.reason || 'Not specified' }}
+          </div>
+
+          <div class="appointment-actions">
+
+            <button
+              mat-stroked-button
+              color="primary"
+              (click)="viewAppointment(appointment)">
+
+              <mat-icon>visibility</mat-icon>
+              View Details
+
+            </button>
+
+            @if (canCancel(appointment)) {
+
+              <button
+                mat-stroked-button
+                color="warn"
+                (click)="cancelAppointment(appointment)">
+
+                <mat-icon>cancel</mat-icon>
+                Cancel Appointment
+
+              </button>
+
+            }
+
+          </div>
+
+        </mat-card>
+
+      } @empty {
+
+        <mat-card class="empty-card">
+          <mat-icon>event_busy</mat-icon>
+
+          <h3>No appointments found</h3>
+
+          <p>
+            No appointments match your search or selected filter.
+          </p>
+
+          <button
+            mat-flat-button
+            color="primary"
+            routerLink="/customer/appointments/book">
+            Book an Appointment
+          </button>
+        </mat-card>
+
+      }
+
+    </div>
+
+  }
+
+</div>

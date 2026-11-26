@@ -5,11 +5,7 @@ import { environment } from "../../../environments/environment";
 import { LoginRequest } from '../../Models/user/LoginRequest';
 import { RegisterRequest} from '../../Models/user/RegisterRequest';
 import { User } from '../../Models/user/User';
-
-interface AuthResponse {
-  token: string;
-  user: User;
-}
+import { AuthResponse } from '../../Models/user/AuthResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -20,13 +16,17 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(request: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
+    let xx = this.apiUrl.concat('/login');
+    debugger
+    return this.http.post<AuthResponse>(xx, request).pipe(
       tap((response) => {
-        sessionStorage.setItem('token', response.token);
-        sessionStorage.setItem('user', JSON.stringify(response.user));
+        sessionStorage.setItem('token', response.accessToken);
+        sessionStorage.setItem('user', JSON.stringify(response));
+        debugger
       }),
     );
   }
+
 
   register(request: RegisterRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, request);

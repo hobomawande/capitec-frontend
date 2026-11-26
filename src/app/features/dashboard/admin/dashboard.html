@@ -1,0 +1,50 @@
+<div class="dashboard-header">
+  <div>
+    <h1>Admin Dashboard</h1>
+    <p>Welcome to Capitec Appointment Management</p>
+  </div>
+</div>
+
+<div class="stats-grid">
+
+  <mat-card class="stat-card">
+    <div class="stat-content">
+      <div>
+        <p>Total Branches</p>
+        <h2>{{ totalBranches() }}</h2>
+      </div>
+      <mat-icon>business</mat-icon>
+    </div>
+  </mat-card>
+
+  <mat-card class="stat-card">
+    <div class="stat-content">
+      <div>
+        <p>Active Branches</p>
+        <h2>{{ activeBranches() }}</h2>
+      </div>
+      <mat-icon>domain</mat-icon>
+    </div>
+  </mat-card>
+
+  <mat-card class="stat-card">
+    <div class="stat-content">
+      <div>
+        <p>Total Appointments</p>
+        <h2>{{ totalAppointments() }}</h2>
+      </div>
+      <mat-icon>calendar_month</mat-icon>
+    </div>
+  </mat-card>
+
+  <mat-card class="stat-card">
+    <div class="stat-content">
+      <div>
+        <p>Upcoming Appointments</p>
+        <h2>{{ upcomingAppointments() }}</h2>
+      </div>
+      <mat-icon>event_available</mat-icon>
+    </div>
+  </mat-card>
+
+</div>

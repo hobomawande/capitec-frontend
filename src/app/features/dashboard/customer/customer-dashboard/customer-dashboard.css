@@ -1,0 +1,41 @@
+.welcome-header {
+  margin-bottom: 25px;
+
+  p {
+    color: #777;
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+
+  mat-card {
+    padding: 25px;
+    border-radius: 12px;
+  }
+
+  mat-icon {
+    color: #008653;
+  }
+
+  p {
+    color: #777;
+  }
+
+  h2 {
+    font-size: 30px;
+  }
+}
+
+.quick-card {
+  padding: 25px;
+  margin-top: 25px;
+}
+
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
