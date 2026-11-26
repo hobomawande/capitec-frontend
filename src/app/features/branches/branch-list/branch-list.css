@@ -1,0 +1,45 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+
+  h1 {
+    margin-bottom: 5px;
+  }
+
+  p {
+    color: #777;
+  }
+}
+
+.table-card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.active {
+  color: #087e55;
+  background: #e5f5ed;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.inactive {
+  color: #b42318;
+  background: #fce8e6;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.loading {
+  display: grid;
+  place-items: center;
+  padding: 50px;
+}
