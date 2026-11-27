@@ -21,10 +21,6 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  // ==============================
-  // LOGIN
-  // ==============================
-
   login(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
       tap((response) => {
@@ -36,38 +32,21 @@ export class AuthService {
 
         sessionStorage.setItem(this.USER_KEY, JSON.stringify(response));
       }),
-
     );
   }
-
-  // ==============================
-  // REGISTER
-  // ==============================
 
   register(request: RegisterRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, request);
   }
-
-  // ==============================
-  // LOGOUT
-  // ==============================
 
   logout(): void {
     sessionStorage.removeItem(this.TOKEN_KEY);
     sessionStorage.removeItem(this.USER_KEY);
   }
 
-  // ==============================
-  // GET TOKEN
-  // ==============================
-
   getToken(): string | null {
     return sessionStorage.getItem(this.TOKEN_KEY);
   }
-
-  // ==============================
-  // GET CURRENT USER
-  // ==============================
 
   getCurrentUser(): User | null {
     const user = sessionStorage.getItem(this.USER_KEY);
@@ -85,35 +64,24 @@ export class AuthService {
     }
   }
 
-  // ==============================
-  // AUTHENTICATION CHECK
-  // ==============================
-
   isAuthenticated(): boolean {
     return !!this.getToken();
   }
 
-  // ==============================
-  // ROLE CHECK
-  // ==============================
 
-  hasRole(role: string): boolean {
+  hasRole(role: string | string[]): boolean {
     const currentUser = this.getCurrentUser();
+    const currentRole = currentUser?.role?.toUpperCase();
 
-    return currentUser?.role?.toUpperCase() === role.toUpperCase();
-  }
-
-  // ==============================
-  // MULTIPLE ROLE CHECK
-  // ==============================
-
-  hasAnyRole(roles: string[]): boolean {
-    const currentUser = this.getCurrentUser();
-
-    if (!currentUser?.role) {
+    if (!currentRole || !role) {
       return false;
     }
 
-    return roles.some((role) => role.toUpperCase() === currentUser.role.toUpperCase());
+    if (Array.isArray(role)) {
+      return role.some((r) => r.toUpperCase() === currentRole);
+    }
+
+    return role.toUpperCase() === currentRole;
   }
+
 }

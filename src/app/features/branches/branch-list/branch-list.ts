@@ -7,7 +7,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import {RouterLink} from '@angular/router';
 import { BranchService } from '../../../core/services/branch';
 import { Branch } from '../../../Models/branch/Branch';
 
@@ -21,6 +23,9 @@ import { Branch } from '../../../Models/branch/Branch';
     MatProgressSpinnerModule,
     MatDialogModule,
     MatTooltipModule,
+    RouterLink,
+    MatSelectModule,
+    MatInputModule,
   ],
   selector: 'app-branch-list',
   styleUrl: './branch-list.css',
