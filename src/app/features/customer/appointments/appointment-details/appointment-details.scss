@@ -1,0 +1,66 @@
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.details-card,
+.timeline-card,
+.notification-card {
+  padding: 24px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+}
+
+.details-card p {
+  margin: 14px 0;
+}
+
+.timeline {
+  margin-top: 25px;
+}
+
+.timeline-step {
+  display: flex;
+  gap: 18px;
+  min-height: 85px;
+}
+
+.timeline-icon {
+  color: #9e9e9e;
+}
+
+.timeline-icon.completed {
+  color: #16834a;
+}
+
+.timeline-content h3 {
+  margin: 0 0 6px;
+}
+
+.timeline-content p {
+  color: #777;
+  margin: 0;
+}
+
+.notification-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #eef5ff;
+}
+
+.notification-card mat-icon {
+  color: #1976d2;
+}
+
+.notification-card h3 {
+  margin: 0 0 8px;
+}
+
+.notification-card p {
+  margin: 0;
+}
+
+.error-message {
+  color: #d32f2f;
+}

@@ -8,6 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { AppointmentService } from '../../../core/services/appointment';
 import { AuthService } from '../../../core/services/auth';
 import { Appointment } from '../../../Models/appointment/Appointment';
+import { AppointmentResponse } from '../../../Models/appointment/AppointmentResponse';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -17,7 +19,7 @@ import { Appointment } from '../../../Models/appointment/Appointment';
   templateUrl: './appointment-list.html',
 })
 export class AppointmentListComponent implements OnInit {
-  appointments = signal<Appointment[]>([]);
+  appointments = signal<AppointmentResponse[]>([]);
   loading = signal(false);
   isAdmin: boolean = false;
   displayedColumns = [
@@ -33,6 +35,7 @@ export class AppointmentListComponent implements OnInit {
   constructor(
     private appointmentService: AppointmentService,
     private auth: AuthService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -65,5 +68,8 @@ export class AppointmentListComponent implements OnInit {
     this.appointmentService.cancelAppointment(appointment.id).subscribe({
       next: () => this.loadAppointments(),
     });
+  }
+  viewAppointment(appointment: AppointmentResponse): void {
+    this.router.navigate(['/customer/appointments', appointment.id]);
   }
 }

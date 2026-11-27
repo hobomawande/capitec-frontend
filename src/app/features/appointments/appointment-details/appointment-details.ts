@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,9 +11,9 @@ import { AppointmentResponse } from '../../../Models/appointment/AppointmentResp
 @Component({
   selector: 'app-appointment-details',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatCardModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule],
   templateUrl: './appointment-details.html',
-  styleUrl: './appointment-details.css',
+  styleUrl: './appointment-details.scss',
 })
 export class AppointmentDetailsComponent implements OnInit {
   appointment = signal<AppointmentResponse | null>(null);

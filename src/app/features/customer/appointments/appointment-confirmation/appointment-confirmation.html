@@ -1,0 +1,91 @@
+
+<div class="confirmation-container">
+
+  @if (loading()) {
+    <p>Loading appointment confirmation...</p>
+  }
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (appointment(); as a) {
+
+    <mat-card class="confirmation-card">
+
+      <div class="success-icon">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+
+      <h1>Appointment Successfully Booked!</h1>
+
+      <p class="subtitle">
+        Your appointment booking has been received.
+      </p>
+
+      <div class="reference-box">
+        <span>Appointment Reference</span>
+        <h2>{{ a.appointmentReference }}</h2>
+      </div>
+
+      <div class="appointment-info">
+
+        <div>
+          <mat-icon>business</mat-icon>
+          <div>
+            <label>Branch</label>
+            <p>{{ a.branchName }}</p>
+          </div>
+        </div>
+
+        <div>
+          <mat-icon>calendar_month</mat-icon>
+          <div>
+            <label>Date</label>
+            <p>{{ a.appointmentDate | date:'fullDate' }}</p>
+          </div>
+        </div>
+
+        <div>
+          <mat-icon>schedule</mat-icon>
+          <div>
+            <label>Time</label>
+            <p>{{ a.startTime }}</p>
+          </div>
+        </div>
+
+        <div>
+          <mat-icon>info</mat-icon>
+          <div>
+            <label>Status</label>
+            <p>{{ a.status }}</p>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="notice">
+        Please keep your appointment reference for future enquiries.
+      </p>
+
+      <div class="actions">
+
+        <a
+          mat-flat-button
+          color="primary"
+          [routerLink]="['/customer/appointments', a.id]">
+          View Appointment
+        </a>
+
+        <a
+          mat-button
+          routerLink="/customer/appointments">
+          My Appointments
+        </a>
+
+      </div>
+
+    </mat-card>
+  }
+
+</div>
