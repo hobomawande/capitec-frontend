@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,7 +16,6 @@ import { AuthService } from '../../../core/services/auth';
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    RouterLink,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -28,8 +28,8 @@ import { AuthService } from '../../../core/services/auth';
   templateUrl: './login.html',
 })
 export class LoginComponent {
-  loading = false;
-  errorMessage = '';
+  loading = signal(false);
+  errorMessage = signal('');
   hidePassword = true;
 
   loginForm;
@@ -51,24 +51,52 @@ export class LoginComponent {
       return;
     }
 
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading.set(true);
+    this.errorMessage.set('');
 
     this.auth.login(this.loginForm.getRawValue()).subscribe({
       next: (response) => {
-        this.loading = false;
-        debugger
-        if (response.role === 'ADMIN') {
-          this.router.navigate(['/admin/dashboard']);
-        } else {
-          this.router.navigate(['/customer/dashboard']);
+        this.loading.set(false);
+
+        if (!response || !response.role) {
+          this.errorMessage.set('Invalid login response. Please contact support.');
+          return;
+        }
+
+        const role = response.role.toUpperCase();
+
+        switch (role) {
+          case 'ADMIN':
+            this.router.navigate(['/admin/dashboard']);
+            break;
+
+          case 'STAFF':
+            this.router.navigate(['/staff/dashboard']);
+            break;
+
+          case 'CUSTOMER':
+            this.router.navigate(['/customer/dashboard']);
+            break;
+
+          default:
+            this.auth.logout();
+            this.errorMessage.set(
+              'Your account does not have an authorised role. Please contact support.',
+            );
+            break;
         }
       },
 
-      error: (error) => {
-        this.loading = false;
+      error: (error: HttpErrorResponse) => {
+        this.loading.set(false);
 
-        this.errorMessage = error.error?.message || 'Invalid email or password';
+        if (error.status === 0) {
+          this.errorMessage.set('Unable to connect to the server. Please try again.');
+        } else if (error.status === 401) {
+          this.errorMessage.set('Incorrect email or password.');
+        } else {
+          this.errorMessage.set(error.error?.message || 'Login failed. Please try again.');
+        }
       },
     });
   }

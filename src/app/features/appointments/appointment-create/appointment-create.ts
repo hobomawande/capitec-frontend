@@ -1,6 +1,7 @@
+
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,15 +11,16 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
 
 import { BranchService } from '../../../core/services/branch';
 import { AppointmentService } from '../../../core/services/appointment';
 import { Branch } from '../../../Models/branch/Branch';
-import { AvailableSlot } from '../../../Models/appointment/AvailableSlot';
 
 @Component({
   standalone: true,
   imports: [
+    RouterLink,
     ReactiveFormsModule,
     MatCardModule,
     MatFormFieldModule,
@@ -28,6 +30,7 @@ import { AvailableSlot } from '../../../Models/appointment/AvailableSlot';
     MatDatepickerModule,
     MatNativeDateModule,
     MatProgressSpinnerModule,
+    MatIconModule,
   ],
   selector: 'app-appointment-create',
   styleUrl: './appointment-create.css',
@@ -35,18 +38,41 @@ import { AvailableSlot } from '../../../Models/appointment/AvailableSlot';
 })
 export class AppointmentCreateComponent implements OnInit {
   branches: Branch[] = [];
-  availableSlots: AvailableSlot[] = [];
+  filteredBranches: Branch[] = [];
 
   loading = false;
-  loadingSlots = false;
   errorMessage = '';
 
-  services = [
+  provinces: string[] = [
+    'Eastern Cape',
+    'Free State',
+    'Gauteng',
+    'KwaZulu-Natal',
+    'Limpopo',
+    'Mpumalanga',
+    'Northern Cape',
+    'North West',
+    'Western Cape',
+  ];
+
+  services: string[] = [
     'Account Opening',
     'Card Services',
     'Account Enquiries',
     'Personal Loan Enquiries',
     'Other Banking Services',
+  ];
+
+  appointmentTimes: string[] = [
+    '08:00',
+    '09:00',
+    '10:00',
+    '11:00',
+    '12:00',
+    '13:00',
+    '14:00',
+    '15:00',
+    '16:00',
   ];
 
   bookingForm;
@@ -58,6 +84,7 @@ export class AppointmentCreateComponent implements OnInit {
     private router: Router,
   ) {
     this.bookingForm = this.fb.nonNullable.group({
+      province: ['', Validators.required],
       branchId: ['', Validators.required],
       serviceName: ['', Validators.required],
       appointmentDate: ['', Validators.required],
@@ -66,41 +93,42 @@ export class AppointmentCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadBranches();
+  }
+
+  loadBranches(): void {
+    this.loading = true;
+    this.errorMessage = '';
+
     this.branchService.getActiveBranches().subscribe({
-      next: (data) => (this.branches = data),
+      next: (data) => {
+        this.branches = data;
+        this.loading = false;
+
+        const province = this.bookingForm.controls.province.value;
+
+        if (province) {
+          this.filteredBranches = this.branches.filter((branch) => branch.province === province);
+        }
+      },
       error: () => {
-        this.errorMessage = 'Unable to load branches';
+        this.loading = false;
+        this.errorMessage = 'Unable to load branches.';
       },
     });
   }
+
+  provinceChanged(): void {
+    const province = this.bookingForm.controls.province.value;
+
+    this.filteredBranches = this.branches.filter((branch) => branch.province === province);
+
+    this.bookingForm.controls.branchId.setValue('');
+  }
+
 
   getMinDate(): Date {
     return new Date();
-  }
-
-  dateChanged(): void {
-    this.bookingForm.controls.appointmentTime.setValue('');
-    this.availableSlots = [];
-
-    const branchId = this.bookingForm.controls.branchId.value;
-    const selectedDate:any = this.bookingForm.controls.appointmentDate.value;
-
-    if (!branchId || !selectedDate) return;
-
-    const date = selectedDate instanceof Date ? this.formatDate(selectedDate) : selectedDate;
-
-    this.loadingSlots = true;
-
-    this.appointmentService.getAvailableSlots(branchId, date).subscribe({
-      next: (slots) => {
-        this.availableSlots = slots;
-        this.loadingSlots = false;
-      },
-      error: () => {
-        this.loadingSlots = false;
-        this.errorMessage = 'Unable to retrieve available slots';
-      },
-    });
   }
 
   private formatDate(date: Date): string {
@@ -111,39 +139,40 @@ export class AppointmentCreateComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
-  submit(): void {
-    if (this.loading) return;
 
+  submit(): void {
     if (this.bookingForm.invalid) {
       this.bookingForm.markAllAsTouched();
       return;
     }
 
-    const value:any = this.bookingForm.getRawValue();
+    const value = this.bookingForm.getRawValue();
 
-    const date =
-      value.appointmentDate instanceof Date
-        ? this.formatDate(value.appointmentDate)
-        : value.appointmentDate;
+    const selectedDate:any = value.appointmentDate;
+
+    const date = selectedDate instanceof Date ? this.formatDate(selectedDate) : selectedDate;
 
     this.loading = true;
     this.errorMessage = '';
 
-    this.appointmentService
-      .createAppointment({
-        ...value,
-        appointmentDate: date,
-      })
-      .subscribe({
-        next: (response) => {
-          this.loading = false;
+    const request = {
+      branchId: value.branchId,
+      serviceName: value.serviceName,
+      appointmentDate: date,
+      startTime: value.appointmentTime,
+      province: value.province,
+      customerId: '',
+    };
 
-          this.router.navigate(['/customer/appointments', response.id, 'confirmation']);
-        },
-        error: (error) => {
-          this.loading = false;
-          this.errorMessage = error.error?.message || 'Appointment booking failed';
-        },
-      });
+    this.appointmentService.createAppointment(request).subscribe({
+      next: (response) => {
+        this.loading = false;
+        this.router.navigate(['/customer/appointments', response.id]);
+      },
+      error: (error) => {
+        this.loading = false;
+        this.errorMessage = error.error?.message || 'Appointment booking failed.';
+      },
+    });
   }
 }

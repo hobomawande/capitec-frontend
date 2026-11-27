@@ -39,3 +39,35 @@
     grid-template-columns: 1fr;
   }
 }
+
+.welcome-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-actions button,
+.header-actions a {
+  min-height: 42px;
+}
+
+@media (max-width: 600px) {
+  .welcome-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

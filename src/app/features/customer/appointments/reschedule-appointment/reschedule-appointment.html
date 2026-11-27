@@ -1,68 +1,249 @@
 
 <div class="page-header">
-  <h1>Reschedule Appointment</h1>
 
-  <a mat-button routerLink="/customer/appointments">
-    <mat-icon>arrow_back</mat-icon>
-    Back to Appointments
-  </a>
+  <div>
+    <h1>Reschedule Appointment</h1>
+    <p>Choose a new date, time and service for your appointment.</p>
+  </div>
+
+  <div class="header-actions">
+
+    <button mat-button type="button" (click)="goBack()">
+      <mat-icon fontIcon="arrow_back"></mat-icon>
+      Back to Appointment
+    </button>
+
+    <button
+      mat-stroked-button
+      type="button"
+      routerLink="/customer/dashboard">
+      <mat-icon fontIcon="dashboard"></mat-icon>
+      Dashboard
+    </button>
+
+  </div>
+
 </div>
 
 @if (loading()) {
-  <p>Loading...</p>
+
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading appointment details...</p>
+  </div>
+
 }
 
 @if (error()) {
-  <p class="error">{{ error() }}</p>
+
+  <div class="error-message" role="alert">
+    <mat-icon fontIcon="error_outline"></mat-icon>
+    {{ error() }}
+  </div>
+
+}
+
+@if (success()) {
+
+  <div class="success-message">
+    <mat-icon fontIcon="check_circle"></mat-icon>
+    {{ success() }}
+  </div>
+
 }
 
 @if (appointment(); as a) {
-  <mat-card class="reschedule-card">
 
-    <h2>{{ a.branchName }}</h2>
-    <p>Reference: {{ a.appointmentReference }}</p>
+  @if (
+    a.status !== 'CANCELLED' &&
+    a.status !== 'COMPLETED' &&
+    a.status !== 'NO_SHOW'
+    ) {
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Appointment Date</mat-label>
-      <input
-        matInput
-        type="date"
-        [(ngModel)]="appointmentDate"
-        [min]="a.appointmentDate"
-        (change)="loadAvailableSlots()">
-    </mat-form-field>
+    <mat-card class="reschedule-card">
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Available Time Slots</mat-label>
+      <div class="appointment-summary">
 
-      <mat-select [(ngModel)]="selectedTime">
-        @for (slot of availableSlots(); track $index) {
-          <mat-option [value]="slot.time">
-            {{ slot.time }}
-          </mat-option>
+        <h2>{{ a.branchName }}</h2>
+
+        <p>
+          <strong>Reference:</strong>
+          {{ a.appointmentReference }}
+        </p>
+
+        <p>
+          <strong>Current date:</strong>
+          {{ a.appointmentDate }}
+        </p>
+
+        <p>
+          <strong>Current time:</strong>
+          {{ a.startTime }}
+        </p>
+
+        <p>
+          <strong>Current service:</strong>
+          {{ a.reason }}
+        </p>
+
+      </div>
+
+      <div class="form-section">
+
+        <h3>New Appointment Details</h3>
+
+        <!-- Service -->
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Appointment Service</mat-label>
+
+          <mat-select
+            [(ngModel)]="selectedServiceName"
+            [disabled]="saving()">
+
+            @for (service of services; track service) {
+              <mat-option [value]="service">
+                {{ service }}
+              </mat-option>
+            }
+
+          </mat-select>
+
+        </mat-form-field>
+
+        <!-- Date -->
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>New Appointment Date</mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="picker"
+            [(ngModel)]="appointmentDate"
+            [min]="getMinDate()"
+            [disabled]="saving()"
+            (dateChange)="loadAvailableSlots()"
+            placeholder="Choose appointment date">
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker">
+          </mat-datepicker-toggle>
+
+          <mat-datepicker #picker></mat-datepicker>
+
+        </mat-form-field>
+
+        <!-- Time slots -->
+
+        <mat-form-field appearance="outline" class="full-width">
+
+          <mat-label>Available Appointment Times</mat-label>
+
+          <mat-select
+            [(ngModel)]="selectedTime"
+            [disabled]="
+              loadingSlots() ||
+              availableSlots().length === 0 ||
+              saving()
+            ">
+
+            @for (slot of availableSlots(); track slot) {
+              <mat-option [value]="slot">
+                {{ slot }}
+              </mat-option>
+            }
+
+          </mat-select>
+
+        </mat-form-field>
+
+        @if (loadingSlots()) {
+
+          <div class="loading-container">
+            <mat-spinner diameter="25"></mat-spinner>
+            <p>Checking available appointment times...</p>
+          </div>
+
         }
-      </mat-select>
-    </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Reason for Appointment</mat-label>
+        @if (
+          !loadingSlots() &&
+          appointmentDate &&
+          availableSlots().length === 0
+          ) {
 
-      <textarea
-        matInput
-        rows="4"
-        [(ngModel)]="reason">
-      </textarea>
-    </mat-form-field>
+          <p class="info-message">
+            No available time slots for this date.
+            Please select another date.
+          </p>
 
-    <button
-      mat-flat-button
-      color="primary"
-      [disabled]="saving() || loading()"
-      (click)="saveChanges()">
+        }
 
-      {{ saving() ? 'Saving...' : 'Save Changes' }}
+      </div>
 
-    </button>
+      <!-- Actions -->
 
-  </mat-card>
+      <div class="form-actions">
+
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="goBack()"
+          [disabled]="saving()">
+
+          <mat-icon fontIcon="close"></mat-icon>
+          Cancel
+
+        </button>
+
+        <button
+          mat-stroked-button
+          type="button"
+          routerLink="/customer/dashboard"
+          [disabled]="saving()">
+
+          <mat-icon fontIcon="dashboard"></mat-icon>
+          Dashboard
+
+        </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          [disabled]="
+            saving() ||
+            loadingSlots() ||
+            !selectedTime ||
+            !appointmentDate ||
+            !selectedServiceName ||
+            !availableSlots().includes(selectedTime)
+          "
+          (click)="saveChanges()">
+
+          @if (saving()) {
+
+            <mat-spinner diameter="20"></mat-spinner>
+            Saving Changes...
+
+          } @else {
+
+            <span class="button-content">
+      <mat-icon fontIcon="event_available"></mat-icon>
+      Confirm Reschedule
+    </span>
+
+          }
+
+        </button>
+
+      </div>
+
+    </mat-card>
+
+  }
+
 }

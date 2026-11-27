@@ -1,19 +1,25 @@
+
 import { Component, OnInit, signal } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
-
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AppointmentService } from '../../../core/services/appointment';
 import { AuthService } from '../../../core/services/auth';
-import { Appointment } from '../../../Models/appointment/Appointment';
 import { AppointmentResponse } from '../../../Models/appointment/AppointmentResponse';
-import { Router } from '@angular/router';
 
 @Component({
   standalone: true,
-  imports: [MatTableModule, MatButtonModule, MatChipsModule, MatIconModule],
+  imports: [
+    MatTableModule,
+    MatButtonModule,
+    MatChipsModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+  ],
   selector: 'app-appointment-list',
   styleUrl: './appointment-list.css',
   templateUrl: './appointment-list.html',
@@ -21,7 +27,11 @@ import { Router } from '@angular/router';
 export class AppointmentListComponent implements OnInit {
   appointments = signal<AppointmentResponse[]>([]);
   loading = signal(false);
-  isAdmin: boolean = false;
+  errorMessage = signal('');
+  successMessage = signal('');
+
+  isAdmin = false;
+
   displayedColumns = [
     'referenceNumber',
     'branchName',
@@ -39,37 +49,101 @@ export class AppointmentListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadAppointments();
     this.isAdmin = this.auth.hasRole('ADMIN');
+    this.loadAppointments();
   }
 
   loadAppointments(): void {
     this.loading.set(true);
+    this.errorMessage.set('');
+
+    // @ts-ignore
+    var id: string = this.auth.getCurrentUser()?.staffId;
 
     const request = this.isAdmin
       ? this.appointmentService.getAllAppointments()
-      : this.appointmentService.getMyAppointments();
+      : this.appointmentService.getMyAppointments(id);
 
     request.subscribe({
       next: (data) => {
         this.appointments.set(data);
         this.loading.set(false);
       },
-
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.errorMessage.set('Unable to load appointments. Please try again.');
+      },
     });
   }
 
-  cancelAppointment(appointment: Appointment): void {
-    if (appointment.status === 'CANCELLED' || appointment.status === 'COMPLETED') {
+  viewAppointment(appointment: AppointmentResponse): void {
+    const route = this.isAdmin
+      ? ['/admin/appointments', appointment.id]
+      : ['/customer/appointments', appointment.id];
+
+    this.router.navigate(route);
+  }
+
+  rescheduleAppointment(appointment: AppointmentResponse): void {
+    if (!this.canManageAppointment(appointment)) {
+      return;
+    }
+
+    this.router.navigate(['/customer/appointments', appointment.id, 'reschedule']);
+  }
+
+  cancelAppointment(appointment: AppointmentResponse): void {
+    if (!this.canManageAppointment(appointment)) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to cancel appointment ${appointment.appointmentReference}?`,
+    );
+
+    if (!confirmed) {
       return;
     }
 
     this.appointmentService.cancelAppointment(appointment.id).subscribe({
-      next: () => this.loadAppointments(),
+      next: () => {
+        this.successMessage.set('Appointment cancelled successfully.');
+        this.loadAppointments();
+      },
+      error: (error) => {
+        this.errorMessage.set(error.error?.message || 'Unable to cancel appointment.');
+      },
     });
   }
-  viewAppointment(appointment: AppointmentResponse): void {
-    this.router.navigate(['/customer/appointments', appointment.id]);
+
+  canManageAppointment(appointment: AppointmentResponse): boolean {
+    return (
+      !this.isAdmin &&
+      appointment.status !== 'CANCELLED' &&
+      appointment.status !== 'COMPLETED' &&
+      appointment.status !== 'NO_SHOW'
+    );
+  }
+
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'BOOKED':
+        return 'primary';
+      case 'CONFIRMED':
+        return 'accent';
+      case 'COMPLETED':
+        return 'primary';
+      case 'CANCELLED':
+        return 'warn';
+      default:
+        return '';
+    }
+  }
+  goToDashboard(): void {
+    if (this.isAdmin) {
+      this.router.navigate(['/admin/dashboard']);
+    } else {
+      this.router.navigate(['/customer/dashboard']);
+    }
   }
 }

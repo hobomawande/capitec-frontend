@@ -1,13 +1,30 @@
-<div class="welcome-header">
-  <h1>Welcome, {{ firstName }}</h1>
-  <p>Manage your Capitec appointments online.</p>
 
-  <a mat-flat-button
-     color="primary"
-     routerLink="/customer/appointments/book">
-    <mat-icon>add</mat-icon>
-    Make an Appointment
-  </a>
+<div class="welcome-header">
+
+  <div>
+    <h1>Welcome, {{ firstName }}</h1>
+    <p>Manage your Capitec appointments online.</p>
+  </div>
+
+  <div class="header-actions">
+
+    <a mat-flat-button
+       color="primary"
+       routerLink="/customer/appointments/book">
+      <mat-icon>add</mat-icon>
+      Make an Appointment
+    </a>
+
+    <button mat-stroked-button
+            color="warn"
+            type="button"
+            (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      Logout
+    </button>
+
+  </div>
+
 </div>
 
 <div class="stats-grid">
