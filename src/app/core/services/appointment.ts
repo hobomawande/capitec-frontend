@@ -18,8 +18,7 @@ export class AppointmentService {
 
   constructor(private http: HttpClient) {}
 
-
-  getMyAppointments(id:string): Observable<AppointmentResponse[]> {
+  getMyAppointments(id: string): Observable<AppointmentResponse[]> {
     return this.http.get<AppointmentResponse[]>(`${this.apiUrl}/my-appointments/${id}`);
   }
 
@@ -35,41 +34,23 @@ export class AppointmentService {
     return this.http.post<Appointment>(this.apiUrl, request);
   }
 
-
   updateAppointment(id: string, request: UpdateAppointmentRequest): Observable<Appointment> {
+    debugger
     return this.http.put<Appointment>(`${this.apiUrl}/${id}`, request);
   }
-
   cancelAppointment(id: string): Observable<Appointment> {
     return this.http.patch<Appointment>(`${this.apiUrl}/cancel/${id}`, {});
   }
-
+  deleteAppointment(id: string): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.apiUrl}/delete/${id}`, {});
+  }
 
   confirmAppointment(id: string): Observable<Appointment> {
-    return this.http.patch<Appointment>(`${this.apiUrl}/${id}/confirm`, {});
+    return this.http.patch<Appointment>(`${this.apiUrl}/confirm/${id}`, {});
   }
-
 
   completeAppointment(id: string): Observable<Appointment> {
-    return this.http.patch<Appointment>(`${this.apiUrl}/${id}/complete`, {});
+    return this.http.patch<Appointment>(`${this.apiUrl}/complete/${id}`, {});
   }
 
-
-  getAppointmentsByStatus(status: AppointmentStatus): Observable<AppointmentResponse[]> {
-    const params = new HttpParams().set('status', status);
-
-    return this.http.get<AppointmentResponse[]>(this.apiUrl, { params });
-  }
-
-
-  getAppointmentsByBranch(branchId: string): Observable<AppointmentResponse[]> {
-    return this.http.get<AppointmentResponse[]>(`${this.apiUrl}/branch/${branchId}`);
-  }
-
-
-  getAvailableSlots(branchId: string, date: string): Observable<string[]> {
-    const params = new HttpParams().set('branchId', branchId).set('date', date);
-
-    return this.http.get<string[]>(`${this.apiUrl}/available-slots`, { params });
-  }
 }

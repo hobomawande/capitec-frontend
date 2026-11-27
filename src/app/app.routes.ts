@@ -10,7 +10,6 @@ import { RescheduleAppointment } from './features/customer/appointments/reschedu
 import { AppointmentConfirmation } from './features/customer/appointments/appointment-confirmation/appointment-confirmation';
 
 export const routes: Routes = [
-  // AUTHENTICATION
   {
     path: 'login',
     loadComponent: () => import('./features/auth/login/login').then((m) => m.LoginComponent),
@@ -22,20 +21,18 @@ export const routes: Routes = [
       import('./features/auth/register/register').then((m) => m.RegisterComponent),
   },
 
-  // ADMIN DASHBOARD
   {
     path: 'dashboard',
     canActivate: [authGuard, roleGuard],
-    data: { role: 'ADMIN' },
+    data: { role: ['ADMIN','STAFF'] },
     loadComponent: () =>
       import('./features/dashboard/admin/dashboard').then((m) => m.AdminDashboardComponent),
   },
 
-  // ADMIN ROUTES
   {
     path: 'admin',
     canActivate: [authGuard, roleGuard],
-    data: { role: 'ADMIN' },
+    data: { role: ['ADMIN','STAFF'] },
 
     children: [
       {
@@ -51,18 +48,20 @@ export const routes: Routes = [
             (m) => m.BranchCreateComponent,
           ),
       },
-
       {
-        path: 'appointments',
-        loadComponent: () =>
-          import('./features/appointments/appointment-list/appointment-list').then(
-            (m) => m.AppointmentListComponent,
-          ),
+        path: 'appointments/:id/reschedule',
+        component: RescheduleAppointment
       },
 
       {
         path: 'appointments/:id',
         component: AppointmentDetailsComponent,
+      },
+      {
+        path: 'appointments',
+        loadComponent: () =>
+          import('./features/admin/appointment-management/appointment-management/appointment-management')
+            .then(m => m.AppointmentManagement),
       },
 
       {
@@ -73,7 +72,6 @@ export const routes: Routes = [
     ],
   },
 
-  // CUSTOMER ROUTES
   {
     path: 'customer',
     canActivate: [authGuard],
@@ -130,7 +128,6 @@ export const routes: Routes = [
       },
     ],
   },
-  // DEFAULT ROUTES
   {
     path: '',
     redirectTo: 'login',

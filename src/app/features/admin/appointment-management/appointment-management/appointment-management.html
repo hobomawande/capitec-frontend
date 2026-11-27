@@ -1,0 +1,253 @@
+
+<div class="page-header">
+
+  <div>
+    <button mat-button routerLink="/admin/dashboard">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Dashboard
+    </button>
+
+    <h1>Appointment Management</h1>
+    <p>View, update, reschedule and manage customer appointments.</p>
+  </div>
+
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="loadAppointments()"
+    [disabled]="loading()">
+    <mat-icon>refresh</mat-icon>
+    Refresh
+  </button>
+
+</div>
+
+<!-- Statistics -->
+<div class="stats-grid">
+
+  <mat-card>
+    <mat-icon>calendar_month</mat-icon>
+    <p>Total Appointments</p>
+    <h2>{{ appointments().length }}</h2>
+  </mat-card>
+
+  <mat-card>
+    <mat-icon>pending_actions</mat-icon>
+    <p>Pending</p>
+    <h2>
+      {{ appointments().filter(a => a.status === 'PENDING').length }}
+    </h2>
+  </mat-card>
+
+  <mat-card>
+    <mat-icon>event_available</mat-icon>
+    <p>Confirmed</p>
+    <h2>
+      {{ appointments().filter(a => a.status === 'CONFIRMED').length }}
+    </h2>
+  </mat-card>
+
+  <mat-card>
+    <mat-icon>check_circle</mat-icon>
+    <p>Completed</p>
+    <h2>
+      {{ appointments().filter(a => a.status === 'COMPLETED').length }}
+    </h2>
+  </mat-card>
+
+</div>
+
+<!-- Error -->
+@if (errorMessage()) {
+  <div class="error-message">
+    <mat-icon>error_outline</mat-icon>
+    {{ errorMessage() }}
+  </div>
+}
+
+<!-- Success -->
+@if (successMessage()) {
+  <div class="success-message">
+    <mat-icon>check_circle</mat-icon>
+    {{ successMessage() }}
+  </div>
+}
+
+<!-- Appointment Table -->
+<div class="table-card">
+
+  @if (loading()) {
+
+    <div class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading appointments...</p>
+    </div>
+
+  } @else {
+
+    @if (appointments().length === 0) {
+
+      <div class="empty-state">
+        <mat-icon>event_busy</mat-icon>
+        <h3>No appointments found</h3>
+        <p>Customer appointments will appear here.</p>
+      </div>
+
+    } @else {
+
+      <div class="table-container">
+
+        <table mat-table [dataSource]="appointments()">
+
+          <!-- Reference -->
+          <ng-container matColumnDef="reference">
+            <th mat-header-cell *matHeaderCellDef>Reference</th>
+            <td mat-cell *matCellDef="let item">
+              <strong>
+                {{ item.appointmentReference || item.id }}
+              </strong>
+            </td>
+          </ng-container>
+
+          <!-- Customer -->
+          <ng-container matColumnDef="customer">
+            <th mat-header-cell *matHeaderCellDef>Customer</th>
+            <td mat-cell *matCellDef="let item">
+              {{ item.customerName || 'N/A' }}
+            </td>
+          </ng-container>
+
+          <!-- Branch -->
+          <ng-container matColumnDef="branch">
+            <th mat-header-cell *matHeaderCellDef>Branch</th>
+            <td mat-cell *matCellDef="let item">
+              {{ item.branchName }}
+            </td>
+          </ng-container>
+
+          <!-- Service -->
+          <ng-container matColumnDef="service">
+            <th mat-header-cell *matHeaderCellDef>Service</th>
+            <td mat-cell *matCellDef="let item">
+              {{ item.reason }}
+            </td>
+          </ng-container>
+
+          <!-- Date -->
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let item">
+              {{ item.appointmentDate | date:'mediumDate' }}
+            </td>
+          </ng-container>
+
+          <!-- Time -->
+          <ng-container matColumnDef="time">
+            <th mat-header-cell *matHeaderCellDef>Time</th>
+            <td mat-cell *matCellDef="let item">
+              {{ item.startTime }}
+            </td>
+          </ng-container>
+
+          <!-- Status -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+
+            <td mat-cell *matCellDef="let item">
+
+              <mat-chip
+                [color]="getStatusColor(item.status)"
+                highlighted>
+                {{ item.status }}
+              </mat-chip>
+
+            </td>
+          </ng-container>
+
+          <!-- Update Status -->
+          <ng-container matColumnDef="updateStatus">
+            <th mat-header-cell *matHeaderCellDef>Update Status</th>
+
+            <td mat-cell *matCellDef="let item">
+
+              <mat-form-field appearance="outline" class="status-select">
+
+                <mat-select
+                  [value]="item.status"
+                  [disabled]="!canUpdateStatus(item) || updating()"
+                  (selectionChange)="updateStatus(item, $event.value)">
+
+                  @for (status of statuses; track status) {
+                    <mat-option
+                      [value]="status"
+                      [disabled]="status === 'NO_SHOW'">
+                      {{ status }}
+                    </mat-option>
+                  }
+
+                </mat-select>
+
+              </mat-form-field>
+
+            </td>
+          </ng-container>
+
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+
+            <td mat-cell *matCellDef="let item">
+
+              <div class="action-buttons">
+
+                <!-- View -->
+                <button
+                  mat-icon-button
+                  color="primary"
+                  matTooltip="View appointment"
+                  [routerLink]="['/admin/appointments', item.id]">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="primary"
+                  matTooltip="Reschedule appointment"
+                  [disabled]="!canUpdateStatus(item)"
+                  [routerLink]="['/admin/appointments', item.id, 'reschedule']">
+                  <mat-icon>edit_calendar</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  matTooltip="Delete appointment"
+                  [disabled]="updating()"
+                  (click)="deleteAppointment(item)">
+
+                  <mat-icon>delete</mat-icon>
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </ng-container>
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumns">
+          </tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns">
+          </tr>
+
+        </table>
+
+      </div>
+
+    }
+
+  }
+
+</div>
