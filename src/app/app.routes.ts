@@ -3,6 +3,11 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth/guard';
 import { roleGuard } from './core/guards/role/guard';
+import { AppointmentDetailsComponent } from './features/appointments/appointment-details/appointment-details';
+import { RescheduleAppointment } from './features/customer/appointments/reschedule-appointment/reschedule-appointment';
+import {
+  AppointmentConfirmation
+} from './features/customer/appointments/appointment-confirmation/appointment-confirmation';
 
 export const routes: Routes = [
   {
@@ -107,6 +112,18 @@ export const routes: Routes = [
           import('././features/appointments/appointment-details/appointment-details').then(
             (m) => m.AppointmentDetailsComponent,
           ),
+      },
+      {
+        path: 'appointments/:id',
+        component: AppointmentDetailsComponent,
+      },
+      {
+        path: 'appointments/:id/reschedule',
+        component: RescheduleAppointment,
+      },
+      {
+        path: 'appointments/:id/confirmation',
+        component: AppointmentConfirmation,
       },
     ],
   },

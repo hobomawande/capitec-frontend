@@ -1,0 +1,68 @@
+
+<div class="page-header">
+  <h1>Reschedule Appointment</h1>
+
+  <a mat-button routerLink="/customer/appointments">
+    <mat-icon>arrow_back</mat-icon>
+    Back to Appointments
+  </a>
+</div>
+
+@if (loading()) {
+  <p>Loading...</p>
+}
+
+@if (error()) {
+  <p class="error">{{ error() }}</p>
+}
+
+@if (appointment(); as a) {
+  <mat-card class="reschedule-card">
+
+    <h2>{{ a.branchName }}</h2>
+    <p>Reference: {{ a.appointmentReference }}</p>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Appointment Date</mat-label>
+      <input
+        matInput
+        type="date"
+        [(ngModel)]="appointmentDate"
+        [min]="a.appointmentDate"
+        (change)="loadAvailableSlots()">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Available Time Slots</mat-label>
+
+      <mat-select [(ngModel)]="selectedTime">
+        @for (slot of availableSlots(); track $index) {
+          <mat-option [value]="slot.time">
+            {{ slot.time }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Reason for Appointment</mat-label>
+
+      <textarea
+        matInput
+        rows="4"
+        [(ngModel)]="reason">
+      </textarea>
+    </mat-form-field>
+
+    <button
+      mat-flat-button
+      color="primary"
+      [disabled]="saving() || loading()"
+      (click)="saveChanges()">
+
+      {{ saving() ? 'Saving...' : 'Save Changes' }}
+
+    </button>
+
+  </mat-card>
+}

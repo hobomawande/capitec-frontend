@@ -3,4 +3,6 @@ export interface UpdateAppointmentRequest {
   serviceName?: string;
   appointmentDate?: string;
   appointmentTime?: string;
+  startTime?: string;
+  reason?: string;
 }

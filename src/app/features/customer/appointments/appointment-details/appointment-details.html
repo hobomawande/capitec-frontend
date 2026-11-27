@@ -1,0 +1,79 @@
+
+@if (loading()) {
+  <p>Loading appointment...</p>
+}
+
+@if (errorMessage) {
+  <p class="error-message">{{ errorMessage }}</p>
+}
+
+@if (appointment(); as item) {
+
+  <div class="page-header">
+    <h1>Appointment Details</h1>
+    <p>Track your appointment status</p>
+  </div>
+
+  <mat-card class="details-card">
+
+    <h2>Appointment Information</h2>
+
+    <p><strong>Reference:</strong> {{ item.appointmentReference }}</p>
+    <p><strong>Branch:</strong> {{ item.branchName }}</p>
+    <p><strong>Date:</strong> {{ item.appointmentDate }}</p>
+    <p><strong>Time:</strong> {{ item.startTime }}</p>
+    <p><strong>Service:</strong> {{ item.reason }}</p>
+    <p><strong>Status:</strong> {{ item.status }}</p>
+
+  </mat-card>
+
+  <mat-card class="timeline-card">
+
+    <h2>Appointment Progress</h2>
+
+    <div class="timeline">
+
+      @for (step of getTimelineSteps(); track step.label) {
+
+        <div class="timeline-step">
+
+          <div class="timeline-icon"
+               [class.completed]="step.completed">
+
+            <mat-icon>
+              {{ step.completed ? 'check_circle' : 'radio_button_unchecked' }}
+            </mat-icon>
+
+          </div>
+
+          <div class="timeline-content">
+            <h3>{{ step.label }}</h3>
+
+            @if (step.completed) {
+              <p>Completed</p>
+            } @else {
+              <p>Awaiting progress</p>
+            }
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  </mat-card>
+
+  <mat-card class="notification-card">
+
+    <mat-icon>notifications_active</mat-icon>
+
+    <div>
+      <h3>Appointment Notification</h3>
+      <p>{{ getNotification() }}</p>
+    </div>
+
+  </mat-card>
+
+}

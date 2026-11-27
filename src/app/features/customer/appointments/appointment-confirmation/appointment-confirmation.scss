@@ -1,0 +1,93 @@
+
+.confirmation-container {
+  display: flex;
+  justify-content: center;
+  padding: 30px 15px;
+}
+
+.confirmation-card {
+  width: 100%;
+  max-width: 650px;
+  padding: 35px;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.success-icon {
+  color: #2e7d32;
+  margin-bottom: 15px;
+}
+
+.success-icon mat-icon {
+  font-size: 65px;
+  width: 65px;
+  height: 65px;
+}
+
+.subtitle {
+  color: #777;
+  margin-bottom: 25px;
+}
+
+.reference-box {
+  background: #f4f7fb;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+}
+
+.reference-box span {
+  color: #777;
+  font-size: 13px;
+}
+
+.reference-box h2 {
+  color: #1976d2;
+  margin-bottom: 0;
+}
+
+.appointment-info {
+  text-align: left;
+  display: grid;
+  gap: 22px;
+  margin: 25px 0;
+}
+
+.appointment-info > div {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.appointment-info mat-icon {
+  color: #1976d2;
+}
+
+.appointment-info label {
+  color: #777;
+  font-size: 13px;
+}
+
+.appointment-info p {
+  margin: 4px 0 0;
+  font-weight: 600;
+}
+
+.notice {
+  background: #fff8e1;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 25px;
+}
+
+.error {
+  color: #d32f2f;
+}

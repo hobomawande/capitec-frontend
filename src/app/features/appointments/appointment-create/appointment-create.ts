@@ -83,11 +83,9 @@ export class AppointmentCreateComponent implements OnInit {
     this.availableSlots = [];
 
     const branchId = this.bookingForm.controls.branchId.value;
-    const selectedDate : any = this.bookingForm.controls.appointmentDate.value;
+    const selectedDate:any = this.bookingForm.controls.appointmentDate.value;
 
-    if (!branchId || !selectedDate) {
-      return;
-    }
+    if (!branchId || !selectedDate) return;
 
     const date = selectedDate instanceof Date ? this.formatDate(selectedDate) : selectedDate;
 
@@ -98,7 +96,6 @@ export class AppointmentCreateComponent implements OnInit {
         this.availableSlots = slots;
         this.loadingSlots = false;
       },
-
       error: () => {
         this.loadingSlots = false;
         this.errorMessage = 'Unable to retrieve available slots';
@@ -115,15 +112,17 @@ export class AppointmentCreateComponent implements OnInit {
   }
 
   submit(): void {
+    if (this.loading) return;
+
     if (this.bookingForm.invalid) {
       this.bookingForm.markAllAsTouched();
       return;
     }
 
-    const value = this.bookingForm.getRawValue();
+    const value:any = this.bookingForm.getRawValue();
 
-    // @ts-ignore
-    const date = value.appointmentDate instanceof Date
+    const date =
+      value.appointmentDate instanceof Date
         ? this.formatDate(value.appointmentDate)
         : value.appointmentDate;
 
@@ -136,14 +135,13 @@ export class AppointmentCreateComponent implements OnInit {
         appointmentDate: date,
       })
       .subscribe({
-        next: () => {
+        next: (response) => {
           this.loading = false;
-          this.router.navigate(['/customer/appointments']);
-        },
 
+          this.router.navigate(['/customer/appointments', response.id, 'confirmation']);
+        },
         error: (error) => {
           this.loading = false;
-
           this.errorMessage = error.error?.message || 'Appointment booking failed';
         },
       });
