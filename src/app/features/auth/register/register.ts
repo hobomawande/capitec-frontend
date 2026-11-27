@@ -1,14 +1,38 @@
 import { Component } from '@angular/core';
 
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+
 import { Router, RouterLink } from '@angular/router';
+
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 
 import { AuthService } from '../../../core/services/auth';
+
+const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const password = control.get('password')?.value;
+  const confirmPassword = control.get('confirmPassword')?.value;
+
+  if (!password || !confirmPassword) {
+    return null;
+  }
+
+  return password === confirmPassword ? null : { passwordMismatch: true };
+};
 
 @Component({
   standalone: true,
@@ -19,6 +43,9 @@ import { AuthService } from '../../../core/services/auth';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
   ],
   selector: 'app-register',
   styleUrl: './register.css',
@@ -26,7 +53,12 @@ import { AuthService } from '../../../core/services/auth';
 })
 export class RegisterComponent {
   loading = false;
+
   errorMessage = '';
+  successMessage = '';
+
+  hidePassword = true;
+  hideConfirmPassword = true;
 
   registerForm;
 
@@ -35,44 +67,114 @@ export class RegisterComponent {
     private auth: AuthService,
     private router: Router,
   ) {
-    this.registerForm = this.fb.nonNullable.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
+    this.registerForm = this.fb.nonNullable.group(
+      {
+        firstName: ['', Validators.required],
+        lastName: ['', Validators.required],
 
-      email: ['', [Validators.required, Validators.email]],
+        email: ['', [Validators.required, Validators.email]],
 
-      password: ['', [Validators.required, Validators.minLength(8)]],
+        role: ['STAFF', Validators.required],
 
-      confirmPassword: ['', Validators.required],
-    });
+        password: ['', [Validators.required, Validators.minLength(8)]],
+
+        confirmPassword: ['', Validators.required],
+      },
+      {
+        validators: passwordMatchValidator,
+      },
+    );
   }
 
   submit(): void {
+    if (this.loading) {
+      return;
+    }
+
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
+
+      this.errorMessage = 'Please complete all required fields correctly.';
       return;
     }
 
-    const { confirmPassword, ...request } = this.registerForm.getRawValue();
+    const formValue = this.registerForm.getRawValue();
 
-    if (request.password !== confirmPassword) {
-      this.errorMessage = 'Passwords do not match';
+    if (formValue.password !== formValue.confirmPassword) {
+      this.errorMessage = 'Passwords do not match.';
       return;
     }
+
+    if (formValue.role !== 'STAFF') {
+      this.errorMessage = 'Only authorised staff registration is permitted.';
+      return;
+    }
+
+    const request = {
+      firstName: formValue.firstName.trim(),
+      lastName: formValue.lastName.trim(),
+      email: formValue.email.trim(),
+      password: formValue.password,
+      role: 'STAFF',
+    };
 
     this.loading = true;
     this.errorMessage = '';
+    this.successMessage = '';
 
     this.auth.register(request).subscribe({
       next: () => {
         this.loading = false;
+
+        this.successMessage = 'Staff account created successfully.';
+
+        this.registerForm.reset({
+          firstName: '',
+          lastName: '',
+          email: '',
+          role: 'STAFF',
+          password: '',
+          confirmPassword: '',
+        });
+
         this.router.navigate(['/login']);
       },
 
-      error: (error) => {
+      error: (error: HttpErrorResponse) => {
         this.loading = false;
-        this.errorMessage = error.error?.message || 'Registration failed';
+
+        this.errorMessage = this.getRegistrationError(error);
+
+        console.error('Registration failed:', error);
       },
     });
+  }
+
+  private getRegistrationError(error: HttpErrorResponse): string {
+    if (error.status === 0) {
+      return 'Unable to connect to the server. Check your internet connection.';
+    }
+
+    if (error.status === 400) {
+      return error.error?.message || 'Invalid registration details. Please check your information.';
+    }
+
+    if (error.status === 401) {
+      return 'You must be logged in to register a staff account.';
+    }
+
+    if (error.status === 403) {
+      return 'Access denied. Only authorised administrators can register staff.';
+    }
+
+    if (error.status === 409) {
+      return 'An account with this email address already exists.';
+    }
+
+    if (error.status >= 500) {
+      return 'Server error. Please try again later.';
+    }
+
+    return error.error?.message || 'Registration failed. Please try again.';
   }
 }

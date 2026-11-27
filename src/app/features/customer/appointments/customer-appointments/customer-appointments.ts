@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { AppointmentService } from '../../../../core/services/appointment';
 import { AppointmentResponse } from '../../../../Models/appointment/AppointmentResponse';
+import { AuthService } from '../../../../core/services/auth';
 
 @Component({
   standalone: true,
@@ -28,6 +29,7 @@ export class CustomerAppointmentsComponent implements OnInit {
   constructor(
     private appointmentService: AppointmentService,
     private router: Router,
+    private auth: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -38,7 +40,8 @@ export class CustomerAppointmentsComponent implements OnInit {
     this.loading.set(true);
     this.errorMessage.set('');
 
-    this.appointmentService.getMyAppointments().subscribe({
+    // @ts-ignore
+    this.appointmentService.getMyAppointments(this.auth.getCurrentUser()?.staffId).subscribe({
       next: (response) => {
         this.appointments.set(response);
         this.loading.set(false);
@@ -131,3 +134,7 @@ export class CustomerAppointmentsComponent implements OnInit {
     return status.toLowerCase();
   }
 }
+
+
+
+

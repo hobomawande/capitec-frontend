@@ -1,54 +1,169 @@
+
 <div class="auth-container">
 
   <mat-card class="auth-card">
 
-    <h2>Create Account</h2>
-    <p>Register for Capitec appointment booking</p>
+    <div class="auth-brand">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <h2>Staff Account Registration</h2>
+      <p>Create an authorised Capitec staff account.</p>
+    </div>
 
     <form [formGroup]="registerForm" (ngSubmit)="submit()">
 
-      <mat-form-field appearance="outline">
+      <!-- First Name -->
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>First Name</mat-label>
         <input matInput formControlName="firstName">
+
+        @if (registerForm.controls.firstName.touched &&
+        registerForm.controls.firstName.hasError('required')) {
+          <mat-error>First name is required.</mat-error>
+        }
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <!-- Last Name -->
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>Last Name</mat-label>
         <input matInput formControlName="lastName">
+
+        @if (registerForm.controls.lastName.touched &&
+        registerForm.controls.lastName.hasError('required')) {
+          <mat-error>Last name is required.</mat-error>
+        }
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
+      <!-- Email -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email Address</mat-label>
         <input matInput type="email" formControlName="email">
+
+        @if (registerForm.controls.email.touched &&
+        registerForm.controls.email.hasError('required')) {
+          <mat-error>Email is required.</mat-error>
+        } @else if (registerForm.controls.email.hasError('email')) {
+          <mat-error>Enter a valid email address.</mat-error>
+        }
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <!-- Role -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Account Role</mat-label>
+
+        <mat-select formControlName="role">
+          <mat-option value="STAFF">Staff</mat-option>
+        </mat-select>
+
+        <mat-hint>Only authorised staff accounts can be created here.</mat-hint>
+      </mat-form-field>
+
+      <!-- Password -->
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>Password</mat-label>
-        <input matInput type="password" formControlName="password">
+
+        <input
+          matInput
+          [type]="hidePassword ? 'password' : 'text'"
+          formControlName="password">
+
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="hidePassword = !hidePassword">
+
+          <mat-icon>
+            {{ hidePassword ? 'visibility' : 'visibility_off' }}
+          </mat-icon>
+
+        </button>
+
+        @if (registerForm.controls.password.touched &&
+        registerForm.controls.password.hasError('required')) {
+          <mat-error>Password is required.</mat-error>
+        }
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <!-- Confirm Password -->
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>Confirm Password</mat-label>
-        <input matInput type="password"
-               formControlName="confirmPassword">
+
+        <input
+          matInput
+          [type]="hideConfirmPassword ? 'password' : 'text'"
+          formControlName="confirmPassword">
+
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="hideConfirmPassword = !hideConfirmPassword">
+
+          <mat-icon>
+            {{ hideConfirmPassword ? 'visibility' : 'visibility_off' }}
+          </mat-icon>
+
+        </button>
+
+        @if (registerForm.controls.confirmPassword.touched &&
+        registerForm.controls.confirmPassword.hasError('required')) {
+          <mat-error>Please confirm your password.</mat-error>
+        }
+
+        @if (registerForm.hasError('passwordMismatch') &&
+        registerForm.controls.confirmPassword.touched) {
+          <mat-error>Passwords do not match.</mat-error>
+        }
       </mat-form-field>
 
+      <!-- Error -->
       @if (errorMessage) {
-        <p class="error-message">{{ errorMessage }}</p>
+        <div class="error-message" role="alert">
+          <mat-icon>error_outline</mat-icon>
+          {{ errorMessage }}
+        </div>
       }
 
-      <button mat-flat-button
-              type="submit"
-              [disabled]="loading">
-        {{ loading ? 'Registering...' : 'Create Account' }}
+      <!-- Success -->
+      @if (successMessage) {
+        <div class="success-message">
+          <mat-icon>check_circle</mat-icon>
+          {{ successMessage }}
+        </div>
+      }
+
+      <!-- Submit -->
+      <button
+        mat-flat-button
+        color="primary"
+        class="submit-button"
+        type="submit"
+        [disabled]="loading">
+
+        @if (loading) {
+          <mat-spinner diameter="20"></mat-spinner>
+          Registering...
+        } @else {
+          Create Staff Account
+        }
+
       </button>
 
     </form>
 
-    <p class="auth-footer">
-      Already registered?
-      <a routerLink="/login">Login</a>
-    </p>
+    <div class="auth-footer">
+
+      <button
+        mat-button
+        type="button"
+        routerLink="/admin/dashboard">
+
+        <mat-icon>arrow_back</mat-icon>
+        Back to Dashboard
+
+      </button>
+
+    </div>
 
   </mat-card>
 

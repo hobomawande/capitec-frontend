@@ -1,125 +1,122 @@
 <div class="details-container">
 
   <div class="page-header">
-    <button mat-button (click)="goBack()">
-      <mat-icon>arrow_back</mat-icon>
-      Back to Appointments
-    </button>
+    <div class="navigation-buttons">
+      <button mat-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Appointments
+      </button>
+    </div>
 
     <h1>Appointment Details</h1>
     <p>View your appointment information and booking status.</p>
+
+
   </div>
 
-  @if (loading()) {
-    <mat-card class="details-card">
-      <p>Loading appointment details...</p>
-    </mat-card>
-  }
+  @if (loading()) { <mat-card class="details-card"> <p>Loading appointment details...</p> </mat-card> }
 
-  @if (errorMessage()) {
-    <mat-card class="error-card">
-      <mat-icon color="warn">error</mat-icon>
-      <p>{{ errorMessage() }}</p>
-    </mat-card>
-  }
+  @if (errorMessage()) { <mat-card class="error-card"> <mat-icon color="warn">error</mat-icon> <p>{{ errorMessage() }}</p> </mat-card> }
 
-  @if (appointment(); as item) {
-    <mat-card class="details-card">
+  @if (appointment(); as item) { <mat-card class="details-card">
 
-      <div class="card-header">
+    <div class="card-header">
+      <div>
+        <h2>Appointment Information</h2>
+        <p>Reference: {{ item.appointmentReference }}</p>
+      </div>
+
+      <span class="status-badge"
+            [class.cancelled]="item.status === 'CANCELLED'"
+            [class.completed]="item.status === 'COMPLETED'"
+            [class.confirmed]="item.status === 'CONFIRMED'">
+      {{ item.status }}
+    </span>
+    </div>
+
+    <div class="details-grid">
+
+      <div class="detail-item">
+        <mat-icon>person</mat-icon>
         <div>
-          <h2>Appointment Information</h2>
-          <p>Reference: {{ item.appointmentReference }}</p>
+          <label>Customer</label>
+          <strong>{{ item.customerName }}</strong>
         </div>
-
-        <span class="status-badge"
-              [class.cancelled]="item.status === 'CANCELLED'"
-              [class.completed]="item.status === 'COMPLETED'"
-              [class.confirmed]="item.status === 'CONFIRMED'">
-          {{ item.status }}
-        </span>
       </div>
 
-      <div class="details-grid">
-
-        <div class="detail-item">
-          <mat-icon>person</mat-icon>
-          <div>
-            <label>Customer</label>
-            <strong>{{ item.customerName }}</strong>
-          </div>
+      <div class="detail-item">
+        <mat-icon>location_on</mat-icon>
+        <div>
+          <label>Branch</label>
+          <strong>{{ item.branchName }}</strong>
         </div>
-
-        <div class="detail-item">
-          <mat-icon>location_on</mat-icon>
-          <div>
-            <label>Branch</label>
-            <strong>{{ item.branchName }}</strong>
-          </div>
-        </div>
-
-        <div class="detail-item">
-          <mat-icon>calendar_month</mat-icon>
-          <div>
-            <label>Appointment Date</label>
-            <strong>{{ item.appointmentDate | date:'fullDate' }}</strong>
-          </div>
-        </div>
-
-        <div class="detail-item">
-          <mat-icon>schedule</mat-icon>
-          <div>
-            <label>Appointment Time</label>
-            <strong>{{ item.startTime }}</strong>
-          </div>
-        </div>
-
-        <div class="detail-item">
-          <mat-icon>map</mat-icon>
-          <div>
-            <label>Province</label>
-            <strong>{{ item.province }}</strong>
-          </div>
-        </div>
-
-        <div class="detail-item">
-          <mat-icon>confirmation_number</mat-icon>
-          <div>
-            <label>Booking Reference</label>
-            <strong>{{ item.appointmentReference }}</strong>
-          </div>
-        </div>
-
       </div>
 
-      <div class="reason-section">
-        <h3>Reason for Appointment</h3>
-        <p>{{ item.reason || 'No reason provided.' }}</p>
+      <div class="detail-item">
+        <mat-icon>calendar_month</mat-icon>
+        <div>
+          <label>Appointment Date</label>
+          <strong>{{ item.appointmentDate | date:'fullDate' }}</strong>
+        </div>
       </div>
 
-      <div class="actions">
+      <div class="detail-item">
+        <mat-icon>schedule</mat-icon>
+        <div>
+          <label>Appointment Time</label>
+          <strong>{{ item.startTime }}</strong>
+        </div>
+      </div>
 
-        <button mat-stroked-button (click)="goBack()">
-          Back
+      <div class="detail-item">
+        <mat-icon>map</mat-icon>
+        <div>
+          <label>Province</label>
+          <strong>{{ item.province }}</strong>
+        </div>
+      </div>
+
+      <div class="detail-item">
+        <mat-icon>confirmation_number</mat-icon>
+        <div>
+          <label>Booking Reference</label>
+          <strong>{{ item.appointmentReference }}</strong>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="reason-section">
+      <h3>Reason for Appointment</h3>
+      <p>{{ item.reason || 'No reason provided.' }}</p>
+    </div>
+
+    <div class="actions">
+
+      <button mat-stroked-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Appointments
+      </button>
+
+      @if (canCancel()) {
+        <button
+          mat-flat-button
+          color="warn"
+          [disabled]="cancelling()"
+          (click)="cancelAppointment()">
+
+          <mat-icon>cancel</mat-icon>
+
+          {{ cancelling() ? 'Cancelling...' : 'Cancel Appointment' }}
+
         </button>
+      }
 
-        @if (canCancel()) {
-          <button
-            mat-flat-button
-            color="warn"
-            [disabled]="cancelling()"
-            (click)="cancelAppointment()">
+    </div>
 
-            <mat-icon>cancel</mat-icon>
+  </mat-card>
 
-            {{ cancelling() ? 'Cancelling...' : 'Cancel Appointment' }}
 
-          </button>
-        }
-
-      </div>
-
-    </mat-card>
   }
 
 </div>

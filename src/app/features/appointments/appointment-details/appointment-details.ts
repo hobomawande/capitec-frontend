@@ -64,7 +64,6 @@ export class AppointmentDetailsComponent implements OnInit {
     }
 
     this.cancelling.set(true);
-
     this.appointmentService.cancelAppointment(current.id).subscribe({
       next: () => {
         this.cancelling.set(false);
