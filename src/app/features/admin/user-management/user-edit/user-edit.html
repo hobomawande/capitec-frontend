@@ -1,0 +1,181 @@
+
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h1>Edit User</h1>
+      <p>Update user account information and permissions.</p>
+    </div>
+
+    <button
+      mat-stroked-button
+      type="button"
+      routerLink="/admin/users">
+
+      <mat-icon>arrow_back</mat-icon>
+      Back to Users
+
+    </button>
+
+  </div>
+
+  @if (loading()) {
+
+    <div class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading user details...</p>
+    </div>
+
+  } @else {
+
+    @if (errorMessage()) {
+      <div class="error-message">
+        <mat-icon>error_outline</mat-icon>
+        {{ errorMessage() }}
+      </div>
+    }
+
+    @if (successMessage()) {
+      <div class="success-message">
+        <mat-icon>check_circle</mat-icon>
+        {{ successMessage() }}
+      </div>
+    }
+
+    @if (user(); as currentUser) {
+
+      <mat-card class="edit-card">
+
+        <div class="card-heading">
+          <mat-icon>manage_accounts</mat-icon>
+
+          <div>
+            <h2>User Information</h2>
+            <p>Manage account details and permissions.</p>
+          </div>
+        </div>
+
+        <form
+          [formGroup]="userForm"
+          (ngSubmit)="saveChanges()">
+
+          <div class="form-grid">
+
+            <!-- First Name -->
+
+            <mat-form-field appearance="outline">
+              <mat-label>First Name</mat-label>
+
+              <input
+                matInput
+                formControlName="firstName"
+                readonly>
+
+              <mat-hint>Editing requires a backend update endpoint.</mat-hint>
+
+            </mat-form-field>
+
+            <!-- Last Name -->
+
+            <mat-form-field appearance="outline">
+              <mat-label>Last Name</mat-label>
+
+              <input
+                matInput
+                formControlName="lastName"
+                readonly>
+
+            </mat-form-field>
+
+            <!-- Email -->
+
+            <mat-form-field appearance="outline">
+              <mat-label>Email Address</mat-label>
+
+              <input
+                matInput
+                type="email"
+                formControlName="email"
+                readonly>
+
+            </mat-form-field>
+
+            <!-- Role -->
+
+            <mat-form-field appearance="outline">
+              <mat-label>User Role</mat-label>
+
+              <mat-select formControlName="role">
+
+                @for (role of roles; track role) {
+                  <mat-option [value]="role">
+                    {{ role }}
+                  </mat-option>
+                }
+
+              </mat-select>
+
+            </mat-form-field>
+
+          </div>
+
+          <div class="account-status">
+
+            <div>
+              <h3>Account Status</h3>
+              <p>
+                Control whether this user can access the system.
+              </p>
+            </div>
+
+            <mat-slide-toggle formControlName="enabled" color="primary">
+              {{ userForm.controls.enabled.value ? 'Active' : 'Inactive' }}
+            </mat-slide-toggle>
+
+          </div>
+
+          <div class="account-meta">
+            <p><strong>User ID:</strong> {{ currentUser.id }}</p>
+            <p><strong>Current Role:</strong> {{ currentUser.role }}</p>
+          </div>
+
+          <div class="form-actions">
+
+            <button
+              mat-stroked-button
+              type="button"
+              (click)="goBack()"
+              [disabled]="saving()">
+
+              Cancel
+
+            </button>
+
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              [disabled]="saving() || userForm.invalid">
+
+              @if (saving()) {
+                <mat-spinner diameter="20"></mat-spinner>
+                Saving...
+              } @else {
+                <mat-icon>save</mat-icon>
+                Save Changes
+              }
+
+            </button>
+
+          </div>
+
+        </form>
+
+      </mat-card>
+
+    }
+
+  }
+
+</div>

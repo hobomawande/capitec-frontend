@@ -1,0 +1,324 @@
+
+<div class="page-container">
+
+  <div class="page-header">
+    <div>
+      <h1>User Management</h1>
+      <p>Register and manage staff accounts.</p>
+    </div>
+
+    <div class="header-actions">
+
+      <button
+        mat-stroked-button
+        routerLink="/admin/dashboard">
+
+        <mat-icon>arrow_back</mat-icon>
+        Dashboard
+
+      </button>
+
+      <button
+        mat-flat-button
+        color="primary"
+        routerLink="/admin/users/create">
+
+        <mat-icon>person_add</mat-icon>
+        Register User
+
+      </button>
+
+    </div>
+  </div>
+
+  <div class="stats-grid">
+
+    <mat-card class="stat-card">
+      <mat-icon>people</mat-icon>
+      <div>
+        <p>Total Staff</p>
+        <h2>{{ users().length }}</h2>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-icon>person_check</mat-icon>
+      <div>
+        <p>Active Staff</p>
+        <h2>{{ users().filter(u => u.enabled).length }}</h2>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-icon>person_off</mat-icon>
+      <div>
+        <p>Inactive Staff</p>
+        <h2>{{ users().filter(u => !u.enabled).length }}</h2>
+      </div>
+    </mat-card>
+
+  </div>
+
+  <mat-card class="table-card">
+
+    <div class="table-heading">
+
+      <div>
+        <h2>Registered Staff</h2>
+        <p>View and manage staff accounts.</p>
+      </div>
+
+      <button
+        mat-icon-button
+        matTooltip="Refresh"
+        (click)="loadUsers()"
+        [disabled]="loading() || updating()">
+
+        <mat-icon>refresh</mat-icon>
+
+      </button>
+
+    </div>
+    <div class="filters">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Search users</mat-label>
+
+        <input
+          matInput
+          #search
+          (input)="searchChanged(search.value)"
+          placeholder="Name or email">
+
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Role</mat-label>
+
+        <mat-select
+          [value]="selectedRole()"
+          (selectionChange)="roleChanged($event.value)">
+
+          <mat-option value="ALL">All Roles</mat-option>
+          <mat-option value="ADMIN">Administrator</mat-option>
+          <mat-option value="STAFF">Staff</mat-option>
+          <mat-option value="CUSTOMER">Customer</mat-option>
+
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Account Status</mat-label>
+
+        <mat-select
+          [value]="selectedStatus()"
+          (selectionChange)="statusChanged($event.value)">
+
+          <mat-option value="ALL">All Statuses</mat-option>
+          <mat-option value="ACTIVE">Active</mat-option>
+          <mat-option value="INACTIVE">Inactive</mat-option>
+
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+    @if (errorMessage()) {
+      <div class="error-message">
+        <mat-icon>error_outline</mat-icon>
+        {{ errorMessage() }}
+      </div>
+    }
+
+    @if (successMessage()) {
+      <div class="success-message">
+        <mat-icon>check_circle</mat-icon>
+        {{ successMessage() }}
+      </div>
+    }
+    @if (loading()) {
+
+      <div class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading accounts...</p>
+      </div>
+
+    } @else {
+      <div class="table-container">
+
+        <table mat-table [dataSource]="filteredUsers()">
+
+          <ng-container matColumnDef="name">
+
+            <th mat-header-cell *matHeaderCellDef>
+              Full Name
+            </th>
+
+            <td mat-cell *matCellDef="let user">
+              <strong>
+                {{ user.fullName}}
+              </strong>
+            </td>
+
+          </ng-container>
+          <ng-container matColumnDef="email">
+
+            <th mat-header-cell *matHeaderCellDef>
+              Email Address
+            </th>
+
+            <td mat-cell *matCellDef="let user">
+              {{ user.email }}
+            </td>
+
+          </ng-container>
+
+          <ng-container matColumnDef="role">
+
+            <th mat-header-cell *matHeaderCellDef>
+              Role
+            </th>
+
+            <td mat-cell *matCellDef="let user">
+
+              @if (editingUserId() === user.id) {
+
+                <mat-form-field appearance="outline" class="role-select">
+
+                  <mat-select
+                    [(ngModel)]="editingRole"
+                    [disabled]="updating()">
+
+                    @for (role of roles; track role) {
+                      <mat-option [value]="role">
+                        {{ role }}
+                      </mat-option>
+                    }
+
+                  </mat-select>
+
+                </mat-form-field>
+
+              } @else {
+
+                <span class="role-badge">
+                  {{ user.role }}
+                </span>
+
+              }
+
+            </td>
+
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+
+            <th mat-header-cell *matHeaderCellDef>
+              Status
+            </th>
+
+            <td mat-cell *matCellDef="let user">
+
+              <span
+                class="status-badge"
+                [class.active]="user.enabled"
+                [class.inactive]="!user.enabled">
+
+                {{ user.enabled ? 'Active' : 'Inactive' }}
+
+              </span>
+
+            </td>
+
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+
+            <th mat-header-cell *matHeaderCellDef>
+              Actions
+            </th>
+
+            <td mat-cell *matCellDef="let user">
+
+              <div class="action-buttons">
+
+                @if (editingUserId() === user.id) {
+
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    matTooltip="Save role"
+                    [disabled]="updating()"
+                    (click)="saveRole(user)">
+
+                    <mat-icon>save</mat-icon>
+
+                  </button>
+
+                  <button
+                    mat-icon-button
+                    matTooltip="Cancel editing"
+                    [disabled]="updating()"
+                    (click)="cancelEdit()">
+
+                    <mat-icon>close</mat-icon>
+
+                  </button>
+
+                } @else {
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    matTooltip="Edit user role"
+                    [disabled]="updating()"
+                    (click)="editUser(user)">
+
+                    <mat-icon>edit</mat-icon>
+
+                  </button>
+
+                  <button
+                    mat-icon-button
+                    [color]="user.enabled ? 'warn' : 'primary'"
+                    [matTooltip]="user.enabled ? 'Deactivate account' : 'Activate account'"
+                    [disabled]="updating()"
+                    (click)="toggleStatus(user)">
+
+                    <mat-icon>
+                      {{ user.enabled ? 'person_off' : 'person_check' }}
+                    </mat-icon>
+
+                  </button>
+
+                }
+
+              </div>
+
+            </td>
+          </ng-container>
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumns">
+          </tr>
+
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns">
+          </tr>
+
+          <tr *matNoDataRow>
+            <td colspan="5" class="empty-state">
+              No matching staff accounts found.
+            </td>
+          </tr>
+
+        </table>
+
+      </div>
+
+    }
+
+  </mat-card>
+
+</div>
