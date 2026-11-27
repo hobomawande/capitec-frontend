@@ -24,7 +24,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     canActivate: [authGuard, roleGuard],
-    data: { role: ['ADMIN','STAFF'] },
+    data: { role: ['ADMIN', 'STAFF'] },
     loadComponent: () =>
       import('./features/dashboard/admin/dashboard').then((m) => m.AdminDashboardComponent),
   },
@@ -32,7 +32,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     canActivate: [authGuard, roleGuard],
-    data: { role: ['ADMIN','STAFF'] },
+    data: { role: ['ADMIN', 'STAFF'] },
 
     children: [
       {
@@ -50,7 +50,7 @@ export const routes: Routes = [
       },
       {
         path: 'appointments/:id/reschedule',
-        component: RescheduleAppointment
+        component: RescheduleAppointment,
       },
 
       {
@@ -60,14 +60,36 @@ export const routes: Routes = [
       {
         path: 'appointments',
         loadComponent: () =>
-          import('./features/admin/appointment-management/appointment-management/appointment-management')
-            .then(m => m.AppointmentManagement),
+          import('./features/admin/appointment-management/appointment-management/appointment-management').then(
+            (m) => m.AppointmentManagement,
+          ),
       },
 
       {
         path: '',
         redirectTo: 'appointments',
         pathMatch: 'full',
+      },
+      {
+        path: 'users',
+        loadComponent: () =>
+          import('./features/admin/user-management/user-management/user-management').then(
+            (m) => m.UserManagement,
+          ),
+      },
+      {
+        path: 'users/create',
+        loadComponent: () =>
+          import('./features/admin/user-management/user-create/user-create').then(
+            (m) => m.UserCreate,
+          ),
+      },
+      {
+        path: 'users/edit/:id',
+        loadComponent: () =>
+          import('./features/admin/user-management/user-edit/user-edit').then(
+            (m) => m.UserEdit,
+          ),
       },
     ],
   },

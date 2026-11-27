@@ -1,0 +1,97 @@
+
+.page-container {
+  padding: 24px;
+}
+
+.page-header {
+  margin-bottom: 25px;
+
+  h1 {
+    margin: 15px 0 5px;
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  p {
+    color: #777;
+  }
+}
+
+.form-card {
+  max-width: 700px;
+  padding: 28px;
+  border-radius: 12px;
+}
+
+.form-heading {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+
+  > mat-icon {
+    color: #007a53;
+    font-size: 35px;
+    width: 35px;
+    height: 35px;
+  }
+
+  h2 {
+    margin: 0;
+  }
+
+  p {
+    color: #777;
+    margin: 5px 0 0;
+  }
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.error-message,
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  margin: 15px 0;
+  border-radius: 6px;
+}
+
+.error-message {
+  color: #c62828;
+  background: #fde8e8;
+}
+
+.success-message {
+  color: #16834b;
+  background: #e3f5eb;
+}
+
+@media (max-width: 600px) {
+  .page-container {
+    padding: 15px;
+  }
+
+  .form-card {
+    padding: 18px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}

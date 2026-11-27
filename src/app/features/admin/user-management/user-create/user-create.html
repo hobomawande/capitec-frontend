@@ -1,0 +1,123 @@
+
+<div class="page-container">
+
+  <div class="page-header">
+    <div>
+      <button mat-button routerLink="/admin/users">
+        <mat-icon>arrow_back</mat-icon>
+        Back to User Management
+      </button>
+
+      <h1>Register New User</h1>
+      <p>Create an administrator, staff or customer account.</p>
+    </div>
+  </div>
+
+  <mat-card class="form-card">
+
+    <div class="form-heading">
+      <mat-icon>person_add</mat-icon>
+      <div>
+        <h2>User Information</h2>
+        <p>Enter the details of the new account.</p>
+      </div>
+    </div>
+
+    <form [formGroup]="userForm" (ngSubmit)="submit()">
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>First Name</mat-label>
+        <input matInput formControlName="firstName">
+
+        @if (userForm.controls.firstName.touched &&
+        userForm.controls.firstName.hasError('required')) {
+          <mat-error>First name is required.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Last Name</mat-label>
+        <input matInput formControlName="lastName">
+
+        @if (userForm.controls.lastName.touched &&
+        userForm.controls.lastName.hasError('required')) {
+          <mat-error>Last name is required.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email Address</mat-label>
+        <input matInput type="email" formControlName="email">
+
+        @if (userForm.controls.email.touched &&
+        userForm.controls.email.hasError('required')) {
+          <mat-error>Email is required.</mat-error>
+        } @else if (userForm.controls.email.hasError('email')) {
+          <mat-error>Enter a valid email address.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Temporary Password</mat-label>
+        <input matInput type="password" formControlName="password">
+
+        @if (userForm.controls.password.touched &&
+        userForm.controls.password.hasError('minlength')) {
+          <mat-error>Password must contain at least 8 characters.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Account Role</mat-label>
+
+        <mat-select formControlName="role">
+          <mat-option value="ADMIN">Administrator</mat-option>
+          <mat-option value="STAFF">Staff</mat-option>
+          <mat-option value="CUSTOMER">Customer</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      @if (errorMessage) {
+        <div class="error-message">
+          <mat-icon>error_outline</mat-icon>
+          {{ errorMessage }}
+        </div>
+      }
+
+      @if (successMessage) {
+        <div class="success-message">
+          <mat-icon>check_circle</mat-icon>
+          {{ successMessage }}
+        </div>
+      }
+
+      <div class="form-actions">
+
+        <button mat-stroked-button
+                type="button"
+                routerLink="/admin/users"
+                [disabled]="loading">
+          Cancel
+        </button>
+
+        <button mat-flat-button
+                color="primary"
+                type="submit"
+                [disabled]="loading">
+
+          @if (loading) {
+            <mat-spinner diameter="20"></mat-spinner>
+            Registering...
+          } @else {
+            <mat-icon>person_add</mat-icon>
+            Register User
+          }
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </mat-card>
+</div>
