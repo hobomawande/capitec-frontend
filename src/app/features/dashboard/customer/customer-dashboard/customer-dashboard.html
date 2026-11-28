@@ -1,65 +1,160 @@
 
-<div class="welcome-header">
+<div class="dashboard-container">
 
-  <div>
-    <h1>Welcome, {{ firstName }}</h1>
-    <p>Manage your Capitec appointments online.</p>
-  </div>
+  <!-- Sticky Header -->
+  <header class="welcome-header">
 
-  <div class="header-actions">
+    <div class="welcome-content">
+      <div class="welcome-icon">
+        <mat-icon>account_balance</mat-icon>
+      </div>
 
-    <a mat-flat-button
-       color="primary"
-       routerLink="/customer/appointments/book">
-      <mat-icon>add</mat-icon>
-      Make an Appointment
-    </a>
+      <div>
+        <h1>Welcome, {{ firstName }}</h1>
+        <p>Manage your Capitec appointments online.</p>
+      </div>
+    </div>
 
-    <button mat-stroked-button
-            color="warn"
-            type="button"
-            (click)="logout()">
-      <mat-icon>logout</mat-icon>
-      Logout
-    </button>
+    <div class="header-actions">
 
-  </div>
+      <a mat-flat-button
+         color="primary"
+         routerLink="/customer/appointments/book">
+        <mat-icon>add</mat-icon>
+        Make an Appointment
+      </a>
+
+      <button mat-stroked-button
+              color="warn"
+              type="button"
+              (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+
+    </div>
+
+  </header>
+
+  <!-- Dashboard Content -->
+  <main class="dashboard-content">
+
+    <!-- Statistics -->
+    <section class="stats-grid">
+
+      <mat-card class="stat-card total-card">
+        <div class="stat-icon">
+          <mat-icon>calendar_month</mat-icon>
+        </div>
+
+        <div class="stat-info">
+          <p>Total Appointments</p>
+          <h2>{{ totalAppointments() }}</h2>
+          <span>All your bookings</span>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card upcoming-card">
+        <div class="stat-icon">
+          <mat-icon>event_available</mat-icon>
+        </div>
+
+        <div class="stat-info">
+          <p>Upcoming Appointments</p>
+          <h2>{{ upcomingAppointments() }}</h2>
+          <span>Your scheduled visits</span>
+        </div>
+      </mat-card>
+
+    </section>
+
+    <!-- Appointment Management -->
+    <section class="section-heading">
+      <div>
+        <h2>Manage Your Appointments</h2>
+        <p>Everything you need to manage your bookings.</p>
+      </div>
+    </section>
+
+    <section class="quick-actions">
+
+      <mat-card class="action-card">
+        <div class="action-icon booking-icon">
+          <mat-icon>event_note</mat-icon>
+        </div>
+
+        <h3>Book an Appointment</h3>
+
+        <p>
+          Schedule a new appointment at your preferred
+          Capitec branch.
+        </p>
+
+        <a mat-flat-button
+           color="primary"
+           routerLink="/customer/appointments/book">
+          <mat-icon>add</mat-icon>
+          Book Now
+        </a>
+      </mat-card>
+
+      <mat-card class="action-card">
+        <div class="action-icon history-icon">
+          <mat-icon>history</mat-icon>
+        </div>
+
+        <h3>My Appointments</h3>
+
+        <p>
+          View your appointment history, check booking
+          statuses and manage existing appointments.
+        </p>
+
+        <a mat-stroked-button
+           color="primary"
+           routerLink="/customer/appointments">
+          <mat-icon>visibility</mat-icon>
+          View Appointments
+        </a>
+      </mat-card>
+
+    </section>
+
+    <!-- Recent Appointments -->
+    <section class="recent-section">
+
+      <div class="section-heading">
+        <div>
+          <h2>Recent Appointments</h2>
+          <p>Keep track of your recent bookings.</p>
+        </div>
+
+        <a mat-button
+           routerLink="/customer/appointments">
+          View All
+          <mat-icon>arrow_forward</mat-icon>
+        </a>
+      </div>
+
+      <mat-card class="recent-card">
+        <div class="empty-state">
+          <mat-icon>event_available</mat-icon>
+          <h3>Your appointments are waiting</h3>
+          <p>
+            View your bookings or schedule a new appointment
+            to get started.
+          </p>
+
+          <a mat-flat-button
+             color="primary"
+             routerLink="/customer/appointments">
+            View My Appointments
+          </a>
+        </div>
+      </mat-card>
+
+    </section>
+
+  </main>
 
 </div>
-
-<div class="stats-grid">
-
-  <mat-card>
-    <mat-icon>calendar_month</mat-icon>
-    <p>Total Appointments</p>
-    <h2>{{ totalAppointments() }}</h2>
-  </mat-card>
-
-  <mat-card>
-    <mat-icon>event_available</mat-icon>
-    <p>Upcoming Appointments</p>
-    <h2>{{ upcomingAppointments() }}</h2>
-  </mat-card>
-
-</div>
-
-<mat-card class="quick-card">
-  <h3>Manage your appointments</h3>
-  <p>View your booking history or check your upcoming appointments.</p>
-
-  <a mat-button routerLink="/customer/appointments">
-    View My Appointments
-  </a>
-</mat-card>
-
-<mat-card class="quick-card">
-  <h3>Recent Appointments</h3>
-  <p>Manage and view the details of your bookings.</p>
-
-  <a mat-raised-button
-     color="primary"
-     routerLink="/customer/appointments">
-    <mat-icon>visibility</mat-icon>
-    View Appointment Details
-  </a>
-</mat-card>

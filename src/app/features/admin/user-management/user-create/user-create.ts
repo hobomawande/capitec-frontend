@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../../../core/services/auth';
 import { RegisterRequest } from '../../../../Models/user/RegisterRequest';
+import { StaffService } from '../../../../core/services/staff';
 
 @Component({
   standalone: true,
@@ -46,10 +47,10 @@ export class UserCreate {
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router,
+    private staff: StaffService,
   ) {
     this.userForm = this.fb.nonNullable.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
+      fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       role: ['CUSTOMER', Validators.required],
@@ -68,7 +69,7 @@ export class UserCreate {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.auth.register(request).subscribe({
+    this.staff.register(request).subscribe({
       next: () => {
         this.loading = false;
         this.successMessage = 'User registered successfully.';

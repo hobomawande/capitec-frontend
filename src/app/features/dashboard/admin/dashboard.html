@@ -2,28 +2,41 @@
 <div class="admin-dashboard">
 
   <!-- Header -->
-  <div class="welcome-header">
-    <div>
+  <div class="welcome-header welcome-header sticky-header">
+    <div class="welcome-content">
+      <span class="welcome-label">ADMINISTRATION PORTAL</span>
       <h1>Admin Dashboard</h1>
-      <p>Manage your Capitec appointment booking system.</p>
+      <p>Welcome back. Manage your Capitec appointment booking system.</p>
     </div>
 
-    <button
-      mat-stroked-button
-      (click)="loadDashboard()"
-      [disabled]="loadingBranches() || loadingAppointments()">
+    <div class="header-actions">
+      <button
+        mat-stroked-button
+        (click)="loadDashboard()"
+        [disabled]="loadingBranches() || loadingAppointments()">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
 
-      <mat-icon>refresh</mat-icon>
-      Refresh Dashboard
-    </button>
+      <button
+        mat-flat-button
+        color="warn"
+        (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+    </div>
   </div>
 
   <!-- Statistics -->
   <div class="stats-grid">
 
     <mat-card class="stat-card">
-      <div class="stat-icon blue">
-        <mat-icon>business</mat-icon>
+      <div class="stat-top">
+        <div class="stat-icon blue">
+          <mat-icon>business</mat-icon>
+        </div>
+        <span class="stat-label">BRANCHES</span>
       </div>
 
       <p>Total Branches</p>
@@ -34,12 +47,17 @@
         <h2>{{ totalBranches() }}</h2>
       }
 
-      <span>{{ activeBranches() }} active branches</span>
+      <span class="stat-description">
+        {{ activeBranches() }} active branches
+      </span>
     </mat-card>
 
     <mat-card class="stat-card">
-      <div class="stat-icon purple">
-        <mat-icon>calendar_month</mat-icon>
+      <div class="stat-top">
+        <div class="stat-icon purple">
+          <mat-icon>calendar_month</mat-icon>
+        </div>
+        <span class="stat-label">BOOKINGS</span>
       </div>
 
       <p>Total Appointments</p>
@@ -50,12 +68,15 @@
         <h2>{{ totalAppointments() }}</h2>
       }
 
-      <span>All registered appointments</span>
+      <span class="stat-description">All registered appointments</span>
     </mat-card>
 
     <mat-card class="stat-card">
-      <div class="stat-icon orange">
-        <mat-icon>event_upcoming</mat-icon>
+      <div class="stat-top">
+        <div class="stat-icon orange">
+          <mat-icon>event_upcoming</mat-icon>
+        </div>
+        <span class="stat-label">UPCOMING</span>
       </div>
 
       <p>Upcoming Appointments</p>
@@ -66,12 +87,15 @@
         <h2>{{ upcomingAppointments() }}</h2>
       }
 
-      <span>Scheduled appointments</span>
+      <span class="stat-description">Scheduled appointments</span>
     </mat-card>
 
     <mat-card class="stat-card">
-      <div class="stat-icon red">
-        <mat-icon>pending_actions</mat-icon>
+      <div class="stat-top">
+        <div class="stat-icon red">
+          <mat-icon>pending_actions</mat-icon>
+        </div>
+        <span class="stat-label">PENDING</span>
       </div>
 
       <p>Pending Appointments</p>
@@ -82,108 +106,115 @@
         <h2>{{ pendingAppointments() }}</h2>
       }
 
-      <span>Awaiting confirmation</span>
+      <span class="stat-description">Awaiting confirmation</span>
     </mat-card>
 
   </div>
 
-  <!-- Appointment Status -->
-  <h2 class="section-title">Appointment Overview</h2>
+  <!-- Appointment Overview -->
+  <div class="section-header">
+    <div>
+      <h2>Appointment Overview</h2>
+      <p>Monitor your appointment activity.</p>
+    </div>
+  </div>
 
   <div class="status-grid">
 
     <mat-card class="status-card">
-      <mat-icon class="confirmed-icon">check_circle</mat-icon>
+      <div class="status-icon confirmed">
+        <mat-icon>check_circle</mat-icon>
+      </div>
       <div>
         <h3>{{ confirmedAppointments() }}</h3>
-        <p>Confirmed</p>
+        <p>Confirmed Appointments</p>
       </div>
     </mat-card>
 
     <mat-card class="status-card">
-      <mat-icon class="completed-icon">task_alt</mat-icon>
+      <div class="status-icon completed">
+        <mat-icon>task_alt</mat-icon>
+      </div>
       <div>
         <h3>{{ completedAppointments() }}</h3>
-        <p>Completed</p>
+        <p>Completed Appointments</p>
       </div>
     </mat-card>
 
   </div>
 
-  <!-- Quick Actions -->
-  <h2 class="section-title">Administration</h2>
+  <!-- Administration -->
+  <div class="section-header">
+    <div>
+      <h2>Administration</h2>
+      <p>Manage the different areas of your booking system.</p>
+    </div>
+  </div>
 
   <div class="management-grid">
 
     <mat-card class="management-card">
-      <mat-icon>business</mat-icon>
+      <div class="management-icon blue">
+        <mat-icon>business</mat-icon>
+      </div>
 
       <h3>Branch Management</h3>
-
       <p>
         Add new branches, update branch information
         and manage existing branches.
       </p>
 
       <div class="card-actions">
-        <a
-          mat-flat-button
-          color="primary"
-          routerLink="/admin/branches/create">
+        <a mat-flat-button color="primary"
+           routerLink="/admin/branches/create">
           <mat-icon>add</mat-icon>
           Add Branch
         </a>
 
-        <a
-          mat-button
-          routerLink="/admin/branches">
+        <a mat-button routerLink="/admin/branches">
           View Branches
         </a>
       </div>
     </mat-card>
 
     <mat-card class="management-card">
-      <mat-icon>group</mat-icon>
+      <div class="management-icon purple">
+        <mat-icon>group</mat-icon>
+      </div>
 
       <h3>User Management</h3>
-
       <p>
         Register administrators, staff and customers
         and manage their accounts.
       </p>
 
       <div class="card-actions">
-        <a
-          mat-flat-button
-          color="primary"
-          routerLink="/admin/users/create">
+        <a mat-flat-button color="primary"
+           routerLink="/admin/users/create">
           <mat-icon>person_add</mat-icon>
           Register User
         </a>
 
-        <a
-          mat-button
-          routerLink="/admin/users">
+        <a mat-button routerLink="/admin/users">
           View Users
         </a>
       </div>
     </mat-card>
 
     <mat-card class="management-card">
-      <mat-icon>event_note</mat-icon>
+      <div class="management-icon orange">
+        <mat-icon>event_note</mat-icon>
+      </div>
 
       <h3>Appointment Management</h3>
-
       <p>
         View customer bookings, confirm appointments,
         reschedule and manage appointment statuses.
       </p>
 
       <div class="card-actions">
-        <a
-          mat-flat-button
-          color="primary"
-          routerLink="/admin/appointments">
+        <a mat-flat-button color="primary"
+           routerLink="/admin/appointments">
           <mat-icon>visibility</mat-icon>
           Manage Appointments
         </a>
@@ -191,20 +222,19 @@
     </mat-card>
 
     <mat-card class="management-card">
-      <mat-icon>bar_chart</mat-icon>
+      <div class="management-icon green">
+        <mat-icon>bar_chart</mat-icon>
+      </div>
 
       <h3>Reports</h3>
-
       <p>
         Review appointment statistics and
         branch performance.
       </p>
 
       <div class="card-actions">
-        <a
-          mat-flat-button
-          color="primary"
-          routerLink="/admin/reports">
+        <a mat-flat-button color="primary"
+           routerLink="/admin/reports">
           <mat-icon>assessment</mat-icon>
           View Reports
         </a>
@@ -220,9 +250,7 @@
       <p>Latest customer bookings in the system.</p>
     </div>
 
-    <a
-      mat-button
-      routerLink="/admin/appointments">
+    <a mat-button routerLink="/admin/appointments">
       View All
       <mat-icon>arrow_forward</mat-icon>
     </a>
@@ -245,26 +273,20 @@
   <mat-card class="recent-card">
 
     @if (loadingAppointments()) {
-
       <div class="loading-state">
         <mat-spinner diameter="35"></mat-spinner>
         <p>Loading appointments...</p>
       </div>
-
     } @else if (recentAppointments().length === 0) {
-
       <div class="empty-state">
         <mat-icon>event_busy</mat-icon>
         <h3>No appointments found</h3>
         <p>Customer appointments will appear here.</p>
       </div>
-
     } @else {
 
       <div class="table-container">
-
         <table>
-
           <thead>
           <tr>
             <th>Reference</th>
@@ -284,28 +306,20 @@
                     {{ item.appointmentReference || item.id }}
                   </strong>
                 </td>
-
                 <td>{{ item.branchName }}</td>
-
                 <td>{{ item.reason }}</td>
-
                 <td>{{ item.appointmentDate }}</td>
-
                 <td>{{ item.startTime }}</td>
-
                 <td>
-                  <span
-                    class="status-badge"
-                    [ngClass]="getStatusClass(item.status)">
+                  <span class="status-badge"
+                        [ngClass]="getStatusClass(item.status)">
                     {{ item.status }}
                   </span>
                 </td>
               </tr>
             }
           </tbody>
-
         </table>
-
       </div>
 
     }

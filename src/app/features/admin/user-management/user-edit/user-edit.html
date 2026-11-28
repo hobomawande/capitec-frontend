@@ -156,14 +156,16 @@
               mat-flat-button
               color="primary"
               type="submit"
-              [disabled]="saving() || userForm.invalid">
+              [disabled]="loading()">
 
-              @if (saving()) {
+              @if (loading()) {
                 <mat-spinner diameter="20"></mat-spinner>
                 Saving...
               } @else {
-                <mat-icon>save</mat-icon>
-                Save Changes
+                <ng-container>
+                  <mat-icon>save</mat-icon>
+                  Save Changes
+                </ng-container>
               }
 
             </button>

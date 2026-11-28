@@ -11,7 +11,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BranchService } from '../../../core/services/branch';
 import { AppointmentService } from '../../../core/services/appointment';
 import { AppointmentResponse } from '../../../Models/appointment/AppointmentResponse';
-
+import { Router } from '@angular/router';
+import { AuthService } from '../../../core/services/auth';
 @Component({
   standalone: true,
   imports: [
@@ -50,6 +51,8 @@ export class AdminDashboardComponent implements OnInit {
   constructor(
     private branchService: BranchService,
     private appointmentService: AppointmentService,
+    private router: Router,
+    private auth: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -140,5 +143,16 @@ export class AdminDashboardComponent implements OnInit {
 
   getStatusClass(status: string): string {
     return status.toLowerCase().replace('_', '-');
+  }
+
+  logout(): void {
+    const confirmed = window.confirm('Are you sure you want to logout?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }

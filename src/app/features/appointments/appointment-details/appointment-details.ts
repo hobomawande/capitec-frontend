@@ -4,14 +4,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-
 import { AppointmentService } from '../../../core/services/appointment';
 import { AppointmentResponse } from '../../../Models/appointment/AppointmentResponse';
-
+import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
-  selector: 'app-appointment-details',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatDividerModule,
+    MatProgressSpinnerModule,
+  ],
+  selector: 'app-appointment-details',
   templateUrl: './appointment-details.html',
   styleUrl: './appointment-details.scss',
 })

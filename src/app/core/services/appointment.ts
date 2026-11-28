@@ -35,7 +35,6 @@ export class AppointmentService {
   }
 
   updateAppointment(id: string, request: UpdateAppointmentRequest): Observable<Appointment> {
-    debugger
     return this.http.put<Appointment>(`${this.apiUrl}/${id}`, request);
   }
   cancelAppointment(id: string): Observable<Appointment> {

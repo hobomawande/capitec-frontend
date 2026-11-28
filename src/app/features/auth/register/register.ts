@@ -22,6 +22,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 
 import { AuthService } from '../../../core/services/auth';
+import { StaffService } from '../../../core/services/staff';
 
 const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password')?.value;
@@ -64,21 +65,18 @@ export class RegisterComponent {
 
   constructor(
     private fb: FormBuilder,
-    private auth: AuthService,
+    private staff: StaffService,
     private router: Router,
   ) {
     this.registerForm = this.fb.nonNullable.group(
       {
-        firstName: ['', Validators.required],
-        lastName: ['', Validators.required],
+        fullName: ['', Validators.required],
 
         email: ['', [Validators.required, Validators.email]],
 
-        role: ['STAFF', Validators.required],
+        role: ['', Validators.required],
 
         password: ['', [Validators.required, Validators.minLength(8)]],
-
-        confirmPassword: ['', Validators.required],
       },
       {
         validators: passwordMatchValidator,
@@ -100,19 +98,13 @@ export class RegisterComponent {
 
     const formValue = this.registerForm.getRawValue();
 
-    if (formValue.password !== formValue.confirmPassword) {
-      this.errorMessage = 'Passwords do not match.';
-      return;
-    }
-
     if (formValue.role !== 'STAFF') {
       this.errorMessage = 'Only authorised staff registration is permitted.';
       return;
     }
 
     const request = {
-      firstName: formValue.firstName.trim(),
-      lastName: formValue.lastName.trim(),
+      fullName: formValue.fullName.trim(),
       email: formValue.email.trim(),
       password: formValue.password,
       role: 'STAFF',
@@ -122,19 +114,17 @@ export class RegisterComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.auth.register(request).subscribe({
+    this.staff.register(request).subscribe({
       next: () => {
         this.loading = false;
 
         this.successMessage = 'Staff account created successfully.';
 
         this.registerForm.reset({
-          firstName: '',
-          lastName: '',
+          fullName: '',
           email: '',
-          role: 'STAFF',
+          role: '',
           password: '',
-          confirmPassword: '',
         });
 
         this.router.navigate(['/login']);
