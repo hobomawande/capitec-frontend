@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import {StaffResponse} from '../../Models/user/StaffResponse';
+import { RegisterRequest } from '../../Models/user/RegisterRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -29,5 +30,9 @@ export class StaffService {
   updateStatus(id: string, enabled: boolean): Observable<StaffResponse> {
     const params = new HttpParams().set('enabled', enabled);
     return this.http.patch<StaffResponse>(`${this.apiUrl}/status/${id}`, {}, { params });
+  }
+
+  register(request: RegisterRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}`, request);
   }
 }

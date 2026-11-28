@@ -13,23 +13,12 @@
 
       <!-- First Name -->
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>First Name</mat-label>
-        <input matInput formControlName="firstName">
+        <mat-label>Full Name</mat-label>
+        <input matInput formControlName="fullName">
 
-        @if (registerForm.controls.firstName.touched &&
-        registerForm.controls.firstName.hasError('required')) {
-          <mat-error>First name is required.</mat-error>
-        }
-      </mat-form-field>
-
-      <!-- Last Name -->
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Last Name</mat-label>
-        <input matInput formControlName="lastName">
-
-        @if (registerForm.controls.lastName.touched &&
-        registerForm.controls.lastName.hasError('required')) {
-          <mat-error>Last name is required.</mat-error>
+        @if (registerForm.controls.fullName.touched &&
+        registerForm.controls.fullName.hasError('required')) {
+          <mat-error>full name is required.</mat-error>
         }
       </mat-form-field>
 
@@ -81,38 +70,6 @@
         @if (registerForm.controls.password.touched &&
         registerForm.controls.password.hasError('required')) {
           <mat-error>Password is required.</mat-error>
-        }
-      </mat-form-field>
-
-      <!-- Confirm Password -->
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Confirm Password</mat-label>
-
-        <input
-          matInput
-          [type]="hideConfirmPassword ? 'password' : 'text'"
-          formControlName="confirmPassword">
-
-        <button
-          mat-icon-button
-          matSuffix
-          type="button"
-          (click)="hideConfirmPassword = !hideConfirmPassword">
-
-          <mat-icon>
-            {{ hideConfirmPassword ? 'visibility' : 'visibility_off' }}
-          </mat-icon>
-
-        </button>
-
-        @if (registerForm.controls.confirmPassword.touched &&
-        registerForm.controls.confirmPassword.hasError('required')) {
-          <mat-error>Please confirm your password.</mat-error>
-        }
-
-        @if (registerForm.hasError('passwordMismatch') &&
-        registerForm.controls.confirmPassword.touched) {
-          <mat-error>Passwords do not match.</mat-error>
         }
       </mat-form-field>
 

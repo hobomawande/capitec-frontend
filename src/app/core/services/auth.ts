@@ -6,7 +6,6 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 import { LoginRequest } from '../../Models/user/LoginRequest';
-import { RegisterRequest } from '../../Models/user/RegisterRequest';
 import { User } from '../../Models/user/User';
 import { AuthResponse } from '../../Models/user/AuthResponse';
 
@@ -35,10 +34,6 @@ export class AuthService {
     );
   }
 
-  register(request: RegisterRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, request);
-  }
-
   logout(): void {
     sessionStorage.removeItem(this.TOKEN_KEY);
     sessionStorage.removeItem(this.USER_KEY);
@@ -48,7 +43,7 @@ export class AuthService {
     return sessionStorage.getItem(this.TOKEN_KEY);
   }
 
-  getCurrentUser(): User | null {
+  getCurrentUser(): any | null {
     const user = sessionStorage.getItem(this.USER_KEY);
 
     if (!user) {

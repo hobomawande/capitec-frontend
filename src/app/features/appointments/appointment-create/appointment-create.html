@@ -1,164 +1,252 @@
-<div class="page-header">
 
-  <button mat-button type="button" routerLink="/customer/dashboard">
-    <mat-icon>arrow_back</mat-icon>
-    Back to Dashboard
-  </button>
+<div class="booking-page">
 
-  <h1>Make an Appointment</h1>
-  <p>Choose your province, branch and convenient appointment time.</p>
+  <!-- Sticky Header -->
+  <div class="page-header">
 
-</div>
+    <button mat-button type="button" routerLink="/customer/dashboard">
+      <mat-icon>arrow_back</mat-icon>
+      Dashboard
+    </button>
 
-<mat-card class="booking-card">
+    <div class="header-title">
+      <h1>Make an Appointment</h1>
+      <p>Book your next visit to a Capitec branch.</p>
+    </div>
 
-  <form [formGroup]="bookingForm" (ngSubmit)="submit()">
+  </div>
 
-    <!-- Province -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Select Province</mat-label>
+  <!-- Main Content -->
+  <div class="booking-content">
 
-      <mat-select
-        formControlName="province"
-        (selectionChange)="provinceChanged()">
+    <mat-card class="booking-card">
 
-        @for (province of provinces; track province) {
-          <mat-option [value]="province">
-            {{ province }}
-          </mat-option>
-        }
+      <!-- Booking Banner -->
+      <div class="booking-banner">
+        <div class="banner-icon">
+          <mat-icon>event_available</mat-icon>
+        </div>
 
-      </mat-select>
-
-      @if (bookingForm.controls.province.touched && bookingForm.controls.province.hasError('required')) {
-        <mat-error>Please select a province.</mat-error>
-      }
-    </mat-form-field>
-
-    <!-- Branch -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Select Branch</mat-label>
-
-      <mat-select
-        formControlName="branchId"
-        [disabled]="!bookingForm.controls.province.value || loading">
-
-        @for (branch of filteredBranches; track branch.id) {
-          <mat-option [value]="branch.id">
-            {{ branch.branchName }} - {{ branch.city }}
-          </mat-option>
-        }
-
-      </mat-select>
-
-      @if (bookingForm.controls.branchId.touched && bookingForm.controls.branchId.hasError('required')) {
-        <mat-error>Please select a branch.</mat-error>
-      }
-    </mat-form-field>
-
-    @if (loading && branches.length === 0) {
-      <div class="info-message">
-        <mat-spinner diameter="24"></mat-spinner>
-        <span>Loading branches...</span>
+        <div>
+          <h2>Schedule Your Visit</h2>
+          <p>Select your preferred branch, service, date and time.</p>
+        </div>
       </div>
-    }
 
-    @if (bookingForm.controls.province.value && filteredBranches.length === 0 && !loading) {
-      <p class="info-message">
-        No active branches found in this province.
-      </p>
-    }
+      <form [formGroup]="bookingForm" (ngSubmit)="submit()">
 
-    <!-- Service -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Appointment Service</mat-label>
+        <div class="form-section">
+          <h3>Branch Information</h3>
+          <p class="section-description">
+            Choose where you would like to have your appointment.
+          </p>
 
-      <mat-select formControlName="serviceName">
-        @for (service of services; track service) {
-          <mat-option [value]="service">
-            {{ service }}
-          </mat-option>
+          <!-- Province -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Select Province</mat-label>
+            <mat-select
+              formControlName="province"
+              (selectionChange)="provinceChanged()">
+
+              @for (province of provinces; track province) {
+                <mat-option [value]="province">
+                  {{ province }}
+                </mat-option>
+              }
+
+            </mat-select>
+
+            <mat-icon matPrefix>map</mat-icon>
+
+            @if (bookingForm.controls.province.touched &&
+            bookingForm.controls.province.hasError('required')) {
+              <mat-error>Please select a province.</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Branch -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Select Branch</mat-label>
+
+            <mat-select
+              formControlName="branchId"
+              [disabled]="!bookingForm.controls.province.value || loading">
+
+              @for (branch of filteredBranches; track branch.id) {
+                <mat-option [value]="branch.id">
+                  {{ branch.branchName }} - {{ branch.city }}
+                </mat-option>
+              }
+
+            </mat-select>
+
+            <mat-icon matPrefix>business</mat-icon>
+
+            @if (bookingForm.controls.branchId.touched &&
+            bookingForm.controls.branchId.hasError('required')) {
+              <mat-error>Please select a branch.</mat-error>
+            }
+          </mat-form-field>
+
+          @if (loading && branches.length === 0) {
+            <div class="info-message">
+              <mat-spinner diameter="22"></mat-spinner>
+              Loading branches...
+            </div>
+          }
+
+          @if (bookingForm.controls.province.value &&
+          filteredBranches.length === 0 && !loading) {
+            <div class="info-message">
+              <mat-icon>info</mat-icon>
+              No active branches found in this province.
+            </div>
+          }
+
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-section">
+          <h3>Appointment Details</h3>
+          <p class="section-description">
+            Choose the service and your preferred appointment time.
+          </p>
+
+          <!-- Service -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Appointment Service</mat-label>
+
+            <mat-select formControlName="serviceName">
+              @for (service of services; track service) {
+                <mat-option [value]="service">
+                  {{ service }}
+                </mat-option>
+              }
+            </mat-select>
+
+            <mat-icon matPrefix>support_agent</mat-icon>
+
+            @if (bookingForm.controls.serviceName.touched &&
+            bookingForm.controls.serviceName.hasError('required')) {
+              <mat-error>Please select an appointment service.</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Date -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Appointment Date</mat-label>
+
+            <input
+              matInput
+              [matDatepicker]="picker"
+              [min]="getMinDate()"
+              formControlName="appointmentDate">
+
+            <mat-datepicker-toggle matIconSuffix [for]="picker">
+            </mat-datepicker-toggle>
+
+            <mat-datepicker #picker></mat-datepicker>
+
+            @if (bookingForm.controls.appointmentDate.touched &&
+            bookingForm.controls.appointmentDate.hasError('required')) {
+              <mat-error>Please select an appointment date.</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Time -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Appointment Time</mat-label>
+
+            <mat-select formControlName="appointmentTime">
+              @for (time of appointmentTimes; track time) {
+                <mat-option [value]="time">
+                  {{ time }}
+                </mat-option>
+              }
+            </mat-select>
+
+            <mat-icon matPrefix>schedule</mat-icon>
+
+            @if (bookingForm.controls.appointmentTime.touched &&
+            bookingForm.controls.appointmentTime.hasError('required')) {
+              <mat-error>Please select an appointment time.</mat-error>
+            }
+          </mat-form-field>
+
+        </div>
+
+        @if (errorMessage) {
+          <div class="error-message" role="alert">
+            <mat-icon>error_outline</mat-icon>
+            {{ errorMessage }}
+          </div>
         }
-      </mat-select>
 
-      @if (bookingForm.controls.serviceName.touched && bookingForm.controls.serviceName.hasError('required')) {
-        <mat-error>Please select an appointment service.</mat-error>
-      }
-    </mat-form-field>
+        <!-- Actions -->
+        <div class="form-actions">
 
-    <!-- Appointment Date -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Appointment Date</mat-label>
+          <button
+            mat-stroked-button
+            type="button"
+            routerLink="/customer/dashboard">
+            Cancel
+          </button>
 
-      <input
-        matInput
-        [matDatepicker]="picker"
-        [min]="getMinDate()"
-        formControlName="appointmentDate">
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="loading">
 
-      <mat-datepicker-toggle matIconSuffix [for]="picker">
-      </mat-datepicker-toggle>
+            @if (loading) {
+              <ng-container>
+                <mat-spinner diameter="20"></mat-spinner>
+                Booking...
+              </ng-container>
+            } @else {
+              <ng-container>
+                <mat-icon>event_available</mat-icon>
+                Create Appointment
+              </ng-container>
+            }
 
-      <mat-datepicker #picker></mat-datepicker>
+          </button>
 
-      @if (bookingForm.controls.appointmentDate.touched && bookingForm.controls.appointmentDate.hasError('required')) {
-        <mat-error>Please select an appointment date.</mat-error>
-      }
-    </mat-form-field>
+        </div>
 
-    <!-- Appointment Time -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Appointment Time</mat-label>
+      </form>
 
-      <mat-select formControlName="appointmentTime">
-        @for (time of appointmentTimes; track time) {
-          <mat-option [value]="time">
-            {{ time }}
-          </mat-option>
-        }
-      </mat-select>
+    </mat-card>
 
-      @if (bookingForm.controls.appointmentTime.touched && bookingForm.controls.appointmentTime.hasError('required')) {
-        <mat-error>Please select an appointment time.</mat-error>
-      }
-    </mat-form-field>
+    <!-- Information Panel -->
+    <div class="booking-help">
 
-    <!-- Error Message -->
-    @if (errorMessage) {
-      <p class="error-message" role="alert">
-        {{ errorMessage }}
-      </p>
-    }
+      <div class="help-icon">
+        <mat-icon>info</mat-icon>
+      </div>
 
-    <!-- Actions -->
-    <div class="form-actions">
+      <h3>Before You Book</h3>
 
-      <button
-        mat-stroked-button
-        type="button"
-        routerLink="/customer/dashboard">
-        <mat-icon>dashboard</mat-icon>
-        Back to Dashboard
-      </button>
+      <p>Please make sure your appointment details are correct before confirming.</p>
 
-      <button
-        mat-flat-button
-        color="primary"
-        type="submit"
-        [disabled]="loading">
+      <div class="help-item">
+        <mat-icon>location_on</mat-icon>
+        <span>Select the branch most convenient for you.</span>
+      </div>
 
-        @if (loading) {
-          <mat-spinner diameter="20"></mat-spinner>
-          Booking...
-        } @else {
-          Confirm Appointment
-        }
+      <div class="help-item">
+        <mat-icon>calendar_month</mat-icon>
+        <span>Choose a suitable appointment date.</span>
+      </div>
 
-      </button>
+      <div class="help-item">
+        <mat-icon>schedule</mat-icon>
+        <span>Arrive a few minutes before your scheduled time.</span>
+      </div>
 
     </div>
 
+  </div>
 
-  </form>
-
-</mat-card>
+</div>

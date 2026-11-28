@@ -10,10 +10,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { AppointmentService } from '../../../../core/services/appointment';
 import { AppointmentResponse } from '../../../../Models/appointment/AppointmentResponse';
 import { AuthService } from '../../../../core/services/auth';
+import { RouterLink } from '@angular/router';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDividerModule,
+    RouterLink,
+  ],
   selector: 'app-customer-appointments',
   styleUrl: './customer-appointments.scss',
   templateUrl: './customer-appointments.html',

@@ -16,6 +16,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { BranchService } from '../../../core/services/branch';
 import { AppointmentService } from '../../../core/services/appointment';
 import { Branch } from '../../../Models/branch/Branch';
+import { MatDividerModule } from '@angular/material/divider';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../core/services/auth';
 
 @Component({
   standalone: true,
@@ -31,6 +34,8 @@ import { Branch } from '../../../Models/branch/Branch';
     MatNativeDateModule,
     MatProgressSpinnerModule,
     MatIconModule,
+    MatDividerModule,
+    CommonModule,
   ],
   selector: 'app-appointment-create',
   styleUrl: './appointment-create.css',
@@ -82,6 +87,7 @@ export class AppointmentCreateComponent implements OnInit {
     private branchService: BranchService,
     private appointmentService: AppointmentService,
     private router: Router,
+    private authService: AuthService,
   ) {
     this.bookingForm = this.fb.nonNullable.group({
       province: ['', Validators.required],
@@ -126,7 +132,6 @@ export class AppointmentCreateComponent implements OnInit {
     this.bookingForm.controls.branchId.setValue('');
   }
 
-
   getMinDate(): Date {
     return new Date();
   }
@@ -139,16 +144,14 @@ export class AppointmentCreateComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
-
   submit(): void {
     if (this.bookingForm.invalid) {
       this.bookingForm.markAllAsTouched();
       return;
     }
-
     const value = this.bookingForm.getRawValue();
 
-    const selectedDate:any = value.appointmentDate;
+    const selectedDate: any = value.appointmentDate;
 
     const date = selectedDate instanceof Date ? this.formatDate(selectedDate) : selectedDate;
 
@@ -161,9 +164,9 @@ export class AppointmentCreateComponent implements OnInit {
       appointmentDate: date,
       startTime: value.appointmentTime,
       province: value.province,
-      customerId: '',
+      customerId: this.authService.getCurrentUser()?.staffId,
     };
-
+    // @ts-ignore
     this.appointmentService.createAppointment(request).subscribe({
       next: (response) => {
         this.loading = false;

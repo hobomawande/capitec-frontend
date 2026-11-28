@@ -1,79 +1,195 @@
 
-@if (loading()) {
-  <p>Loading appointment...</p>
-}
+<div class="appointment-details-container">
 
-@if (errorMessage) {
-  <p class="error-message">{{ errorMessage }}</p>
-}
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="35"></mat-spinner>
+      <p>Loading appointment details...</p>
+    </div>
+  }
 
-@if (appointment(); as item) {
+  @if (errorMessage) {
+    <div class="error-message">
+      <mat-icon>error_outline</mat-icon>
+      {{ errorMessage }}
+    </div>
+  }
 
-  <div class="page-header">
-    <h1>Appointment Details</h1>
-    <p>Track your appointment status</p>
-  </div>
+  @if (appointment(); as item) {
 
-  <mat-card class="details-card">
+    <!-- Header -->
+    <div class="page-header">
 
-    <h2>Appointment Information</h2>
+      <div>
+        <h1>Appointment Details</h1>
+        <p>View and track your appointment progress.</p>
+      </div>
 
-    <p><strong>Reference:</strong> {{ item.appointmentReference }}</p>
-    <p><strong>Branch:</strong> {{ item.branchName }}</p>
-    <p><strong>Date:</strong> {{ item.appointmentDate }}</p>
-    <p><strong>Time:</strong> {{ item.startTime }}</p>
-    <p><strong>Service:</strong> {{ item.reason }}</p>
-    <p><strong>Status:</strong> {{ item.status }}</p>
+      <button mat-stroked-button
+              routerLink="/customer/appointments">
+        <mat-icon>arrow_back</mat-icon>
+        My Appointments
+      </button>
 
-  </mat-card>
+    </div>
 
-  <mat-card class="timeline-card">
+    <!-- Appointment Summary -->
+    <mat-card class="details-card">
 
-    <h2>Appointment Progress</h2>
+      <div class="card-heading">
 
-    <div class="timeline">
-
-      @for (step of getTimelineSteps(); track step.label) {
-
-        <div class="timeline-step">
-
-          <div class="timeline-icon"
-               [class.completed]="step.completed">
-
-            <mat-icon>
-              {{ step.completed ? 'check_circle' : 'radio_button_unchecked' }}
-            </mat-icon>
-
-          </div>
-
-          <div class="timeline-content">
-            <h3>{{ step.label }}</h3>
-
-            @if (step.completed) {
-              <p>Completed</p>
-            } @else {
-              <p>Awaiting progress</p>
-            }
-
-          </div>
-
+        <div>
+          <span class="section-label">BOOKING REFERENCE</span>
+          <h2>{{ item.appointmentReference }}</h2>
+          <p>{{ item.branchName }}</p>
         </div>
 
-      }
+        <span class="status-badge"
+              [ngClass]="item.status.toLowerCase()">
+          {{ item.status }}
+        </span>
 
-    </div>
+      </div>
 
-  </mat-card>
+      <mat-divider></mat-divider>
 
-  <mat-card class="notification-card">
+      <h3 class="section-title">Appointment Information</h3>
 
-    <mat-icon>notifications_active</mat-icon>
+      <div class="details-grid">
 
-    <div>
-      <h3>Appointment Notification</h3>
-      <p>{{ getNotification() }}</p>
-    </div>
+        <div class="detail-item">
+          <div class="detail-icon">
+            <mat-icon>business</mat-icon>
+          </div>
+          <div>
+            <label>Branch</label>
+            <strong>{{ item.branchName }}</strong>
+          </div>
+        </div>
 
-  </mat-card>
+        <div class="detail-item">
+          <div class="detail-icon">
+            <mat-icon>calendar_month</mat-icon>
+          </div>
+          <div>
+            <label>Appointment Date</label>
+            <strong>{{ item.appointmentDate | date :'fullDate' }}</strong>
+          </div>
+        </div>
 
-}
+        <div class="detail-item">
+          <div class="detail-icon">
+            <mat-icon>schedule</mat-icon>
+          </div>
+          <div>
+            <label>Appointment Time</label>
+            <strong>{{ item.startTime }}</strong>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-icon">
+            <mat-icon>description</mat-icon>
+          </div>
+          <div>
+            <label>Service / Reason</label>
+            <strong>{{ item.reason || 'Not specified' }}</strong>
+          </div>
+        </div>
+
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Actions -->
+      <div class="appointment-actions">
+
+        <button mat-stroked-button
+                routerLink="/customer/appointments">
+          <mat-icon>arrow_back</mat-icon>
+          Back
+        </button>
+
+        @if (item.status === 'PENDING' ||
+        item.status === 'CONFIRMED') {
+
+          <button
+            mat-flat-button
+            color="primary"
+            [routerLink]="['/customer/appointments', item.id, 'reschedule']">
+
+            <mat-icon>edit_calendar</mat-icon>
+            Reschedule Appointment
+
+          </button>
+
+        }
+
+      </div>
+
+    </mat-card>
+
+    <!-- Appointment Timeline -->
+    <mat-card class="timeline-card">
+
+      <div class="section-heading">
+        <div>
+          <h2>Appointment Progress</h2>
+          <p>Track the progress of your booking.</p>
+        </div>
+
+        <mat-icon>timeline</mat-icon>
+      </div>
+
+      <div class="timeline">
+
+        @for (step of getTimelineSteps(); track step.label) {
+
+          <div class="timeline-step"
+               [class.completed]="step.completed">
+
+            <div class="timeline-icon">
+
+              <mat-icon>
+                {{ step.completed
+                ? 'check_circle'
+                : 'radio_button_unchecked' }}
+              </mat-icon>
+
+            </div>
+
+            <div class="timeline-content">
+              <h3>{{ step.label }}</h3>
+
+              <p>
+                {{ step.completed
+                ? 'Completed'
+                : 'Awaiting progress' }}
+              </p>
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    </mat-card>
+
+    <!-- Notification -->
+    <mat-card class="notification-card">
+
+      <div class="notification-icon">
+        <mat-icon>notifications_active</mat-icon>
+      </div>
+
+      <div>
+        <h3>Appointment Notification</h3>
+        <p>{{ getNotification() }}</p>
+      </div>
+
+    </mat-card>
+
+  }
+
+</div>
