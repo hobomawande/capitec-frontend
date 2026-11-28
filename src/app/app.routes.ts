@@ -8,6 +8,7 @@ import { AppointmentDetailsComponent } from './features/appointments/appointment
 import { RescheduleAppointment } from './features/customer/appointments/reschedule-appointment/reschedule-appointment';
 
 import { AppointmentConfirmation } from './features/customer/appointments/appointment-confirmation/appointment-confirmation';
+import { Reports } from './features/admin/reports/reports';
 
 export const routes: Routes = [
   {
@@ -87,9 +88,12 @@ export const routes: Routes = [
       {
         path: 'users/edit/:id',
         loadComponent: () =>
-          import('./features/admin/user-management/user-edit/user-edit').then(
-            (m) => m.UserEdit,
-          ),
+          import('./features/admin/user-management/user-edit/user-edit').then((m) => m.UserEdit),
+      },
+      {
+        path: 'reports',
+        loadComponent: () =>
+          import('./features/admin/reports/reports').then((m) => m.Reports),
       },
     ],
   },
