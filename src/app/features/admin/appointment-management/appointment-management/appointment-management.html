@@ -179,8 +179,7 @@
 
                   @for (status of statuses; track status) {
                     <mat-option
-                      [value]="status"
-                      [disabled]="status === 'NO_SHOW'">
+                      [value]="status">
                       {{ status }}
                     </mat-option>
                   }

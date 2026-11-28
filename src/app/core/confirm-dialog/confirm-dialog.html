@@ -1,0 +1,32 @@
+<div class="confirm-dialog">
+
+  <div class="dialog-icon" [class.danger]="data.color === 'warn'">
+    <mat-icon>{{ data.icon || 'help_outline' }}</mat-icon>
+  </div>
+
+  <div class="dialog-content">
+    <h2>{{ data.title }}</h2>
+
+    <p>{{ data.message }}</p>
+  </div>
+
+  <div class="dialog-actions">
+
+    <button
+      mat-stroked-button
+      class="cancel-button"
+      (click)="cancel()">
+      {{ data.cancelText || 'Cancel' }}
+    </button>
+
+    <button
+      mat-flat-button
+      [color]="data.color || 'primary'"
+      (click)="confirm()">
+      <mat-icon>check</mat-icon>
+      {{ data.confirmText || 'Confirm' }}
+    </button>
+
+  </div>
+
+</div>

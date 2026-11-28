@@ -9,6 +9,9 @@ import { CreateAppointmentRequest } from '../../Models/appointment/CreateAppoint
 import { AppointmentStatus } from '../../Models/appointment/AppointmentStatus';
 import { UpdateAppointmentRequest } from '../../Models/appointment/UpdateAppointmentRequest';
 import { AppointmentResponse } from '../../Models/appointment/AppointmentResponse';
+import { request } from 'express';
+
+class AppointmentsUpdate {}
 
 @Injectable({
   providedIn: 'root',
@@ -37,21 +40,21 @@ export class AppointmentService {
   updateAppointment(id: string, request: UpdateAppointmentRequest): Observable<Appointment> {
     return this.http.put<Appointment>(`${this.apiUrl}/${id}`, request);
   }
-  cancelAppointment(id: string): Observable<Appointment> {
-    return this.http.patch<Appointment>(`${this.apiUrl}/cancel/${id}`, {});
+  cancelAppointment(request: AppointmentsUpdate): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.apiUrl}/cancel`, request);
   }
-  deleteAppointment(id: string): Observable<Appointment> {
-    return this.http.patch<Appointment>(`${this.apiUrl}/delete/${id}`, {});
-  }
-
-  confirmAppointment(id: string): Observable<Appointment> {
-    return this.http.patch<Appointment>(`${this.apiUrl}/confirm/${id}`, {});
+  deleteAppointment(request: AppointmentsUpdate): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.apiUrl}/delete`, request);
   }
 
-  completeAppointment(id: string): Observable<Appointment> {
-    return this.http.patch<Appointment>(`${this.apiUrl}/complete/${id}`, {});
+  confirmAppointment(request: AppointmentsUpdate): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.apiUrl}/confirm`, request);
   }
-  noshowAppointment(id: string): Observable<Appointment> {
-    return this.http.patch<Appointment>(`${this.apiUrl}/noshow/${id}`, {});
+
+  completeAppointment(request: AppointmentsUpdate): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.apiUrl}/complete`, request);
+  }
+  noshowAppointment(request: AppointmentsUpdate): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.apiUrl}/noshow`, request);
   }
 }
