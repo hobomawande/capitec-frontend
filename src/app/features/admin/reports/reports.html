@@ -1,0 +1,364 @@
+
+<div class="reports-dashboard">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="header-title">
+      <div class="title-icon">
+        <mat-icon>analytics</mat-icon>
+      </div>
+
+      <div>
+        <h2>Reports & Analytics</h2>
+        <p>Track appointments, monitor activity and analyse branch performance.</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+
+      <button mat-stroked-button color="primary"
+              routerLink="/admin/dashboard"
+              class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Dashboard
+      </button>
+
+      <mat-form-field appearance="outline" class="period-select">
+        <mat-label>Report Period</mat-label>
+
+        <mat-select [(value)]="selectedPeriod"
+                    (selectionChange)="onPeriodChange()">
+          <mat-option value="today">Today</mat-option>
+          <mat-option value="week">This Week</mat-option>
+          <mat-option value="month">This Month</mat-option>
+          <mat-option value="year">This Year</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="42"></mat-spinner>
+      <h3>Preparing your reports</h3>
+      <p>Retrieving appointment and branch information...</p>
+    </div>
+  }
+
+  <!-- ERROR -->
+  @if (errorMessage()) {
+    <mat-card class="error-card">
+      <div class="error-icon">
+        <mat-icon>error_outline</mat-icon>
+      </div>
+
+      <div class="error-content">
+        <h3>Unable to load reports</h3>
+        <p>{{ errorMessage() }}</p>
+
+        <button mat-stroked-button color="primary"
+                (click)="loadReports()">
+          <mat-icon>refresh</mat-icon>
+          Try Again
+        </button>
+      </div>
+    </mat-card>
+  }
+
+  @if (!loading() && !errorMessage()) {
+
+    <!-- APPOINTMENT OVERVIEW -->
+    <div class="section-heading">
+      <div>
+        <span class="section-eyebrow">PERFORMANCE SUMMARY</span>
+        <h3>Appointment Overview</h3>
+        <p>A summary of your appointment activity and booking performance.</p>
+      </div>
+
+      <span class="live-indicator">
+        <span></span>
+        Live data
+      </span>
+    </div>
+
+    <!-- STATISTICS -->
+    <div class="stats-grid">
+
+      <mat-card class="stat-card total-card">
+        <div class="stat-top">
+          <div class="stat-icon blue">
+            <mat-icon>event</mat-icon>
+          </div>
+          <span class="stat-label">ALL BOOKINGS</span>
+        </div>
+
+        <div class="stat-value">
+          {{ report.totalAppointments | number }}
+        </div>
+
+        <div class="stat-footer">
+          <span>Total appointments</span>
+          <mat-icon>trending_up</mat-icon>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card pending-card">
+        <div class="stat-top">
+          <div class="stat-icon orange">
+            <mat-icon>pending_actions</mat-icon>
+          </div>
+          <span class="stat-label">AWAITING ACTION</span>
+        </div>
+
+        <div class="stat-value">
+          {{ report.pendingAppointments | number }}
+        </div>
+
+        <div class="stat-footer">
+          <span>Pending appointments</span>
+          <mat-icon>schedule</mat-icon>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card confirmed-card">
+        <div class="stat-top">
+          <div class="stat-icon indigo">
+            <mat-icon>event_available</mat-icon>
+          </div>
+          <span class="stat-label">SCHEDULED</span>
+        </div>
+
+        <div class="stat-value">
+          {{ report.confirmedAppointments | number }}
+        </div>
+
+        <div class="stat-footer">
+          <span>Confirmed appointments</span>
+          <mat-icon>verified</mat-icon>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card completed-card">
+        <div class="stat-top">
+          <div class="stat-icon green">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <span class="stat-label">SUCCESSFUL</span>
+        </div>
+
+        <div class="stat-value">
+          {{ report.completedAppointments | number }}
+        </div>
+
+        <div class="stat-footer">
+          <span>Completed appointments</span>
+          <mat-icon>task_alt</mat-icon>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card cancelled-card">
+        <div class="stat-top">
+          <div class="stat-icon red">
+            <mat-icon>cancel</mat-icon>
+          </div>
+          <span class="stat-label">CANCELLED</span>
+        </div>
+
+        <div class="stat-value">
+          {{ report.cancelledAppointments | number }}
+        </div>
+
+        <div class="stat-footer">
+          <span>Cancelled appointments</span>
+          <mat-icon>remove_circle_outline</mat-icon>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card noshow-card">
+        <div class="stat-top">
+          <div class="stat-icon grey">
+            <mat-icon>person_off</mat-icon>
+          </div>
+          <span class="stat-label">NO SHOW</span>
+        </div>
+
+        <div class="stat-value">
+          {{ report.noShowAppointments | number }}
+        </div>
+
+        <div class="stat-footer">
+          <span>Missed appointments</span>
+          <mat-icon>visibility_off</mat-icon>
+        </div>
+      </mat-card>
+
+    </div>
+
+    <!-- CHARTS -->
+      <!-- Analytics -->
+    <div class="section-heading analytics-heading">
+      <div>
+        <h3>Appointment Analytics</h3>
+        <p>Understand booking patterns and appointment distribution</p>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+
+      <!-- Appointment Trends -->
+      <mat-card class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title-icon blue">
+            <mat-icon>show_chart</mat-icon>
+          </div>
+
+          <div>
+            <h3>Appointment Trends</h3>
+            <p>Daily appointment activity</p>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <canvas #appointmentChart></canvas>
+
+          @if (report.totalAppointments === 0) {
+            <div class="empty-chart">
+              <mat-icon>insert_chart_outlined</mat-icon>
+              <p>No appointments found for this period.</p>
+            </div>
+          }
+        </div>
+      </mat-card>
+
+      <!-- Appointment Status -->
+      <mat-card class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title-icon purple">
+            <mat-icon>donut_large</mat-icon>
+          </div>
+
+          <div>
+            <h3>Appointment Status</h3>
+            <p>Distribution by booking status</p>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <canvas #statusChart></canvas>
+
+          @if (report.totalAppointments === 0) {
+            <div class="empty-chart">
+              <mat-icon>pie_chart_outline</mat-icon>
+              <p>No appointment status data available.</p>
+            </div>
+          }
+        </div>
+      </mat-card>
+
+    </div>
+    <!-- BRANCH PERFORMANCE -->
+    <mat-card class="table-card">
+
+      <div class="table-header">
+
+        <div class="table-title">
+          <div class="chart-title-icon green">
+            <mat-icon>business</mat-icon>
+          </div>
+
+          <div>
+            <span class="section-eyebrow">LOCATION INSIGHTS</span>
+            <h3>Branch Performance</h3>
+            <p>Compare appointment activity across branches.</p>
+          </div>
+        </div>
+
+        <span class="branch-count">
+          <mat-icon>location_on</mat-icon>
+          {{ branchPerformance.length }} Branches
+        </span>
+
+      </div>
+
+      <div class="table-divider"></div>
+
+      @if (branchPerformance.length > 0) {
+
+        <div class="table-responsive">
+
+          <table mat-table [dataSource]="branchPerformance">
+
+            <ng-container matColumnDef="branch">
+              <th mat-header-cell *matHeaderCellDef>BRANCH NAME</th>
+
+              <td mat-cell *matCellDef="let row">
+                <div class="branch-name">
+                  <div class="branch-icon">
+                    <mat-icon>store</mat-icon>
+                  </div>
+                  <span>{{ row.branchName }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="total">
+              <th mat-header-cell *matHeaderCellDef>TOTAL</th>
+              <td mat-cell *matCellDef="let row">
+                <strong>{{ row.totalAppointments | number }}</strong>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="completed">
+              <th mat-header-cell *matHeaderCellDef>COMPLETED</th>
+              <td mat-cell *matCellDef="let row">
+                <span class="status-pill completed">
+                  {{ row.completedAppointments | number }}
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="cancelled">
+              <th mat-header-cell *matHeaderCellDef>CANCELLED</th>
+              <td mat-cell *matCellDef="let row">
+                <span class="status-pill cancelled">
+                  {{ row.cancelledAppointments | number }}
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="pending">
+              <th mat-header-cell *matHeaderCellDef>PENDING</th>
+              <td mat-cell *matCellDef="let row">
+                <span class="status-pill pending">
+                  {{ row.pendingAppointments | number }}
+                </span>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          </table>
+
+        </div>
+
+      } @else {
+
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <mat-icon>business</mat-icon>
+          </div>
+
+          <h3>No branch information available</h3>
+          <p>There are currently no branches to display.</p>
+        </div>
+
+      }
+
+    </mat-card>
+
+  }
+
+</div>

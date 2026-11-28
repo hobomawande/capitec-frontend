@@ -31,8 +31,7 @@ export class AppointmentService {
   }
 
   createAppointment(request: CreateAppointmentRequest): Observable<Appointment> {
-    return  this.http.post<Appointment>(this.apiUrl, request);
-
+    return this.http.post<Appointment>(this.apiUrl, request);
   }
 
   updateAppointment(id: string, request: UpdateAppointmentRequest): Observable<Appointment> {
@@ -52,5 +51,7 @@ export class AppointmentService {
   completeAppointment(id: string): Observable<Appointment> {
     return this.http.patch<Appointment>(`${this.apiUrl}/complete/${id}`, {});
   }
-
+  noshowAppointment(id: string): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.apiUrl}/noshow/${id}`, {});
+  }
 }

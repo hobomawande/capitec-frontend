@@ -57,7 +57,7 @@ export class AppointmentManagement implements OnInit {
     'actions',
   ];
 
-  statuses: AppointmentStatus[] = ['CONFIRMED', 'CANCELLED', 'COMPLETED'];
+  statuses: AppointmentStatus[] = ['CONFIRMED', 'CANCELLED', 'COMPLETED','NO_SHOW'];
 
   constructor(
     private appointmentService: AppointmentService,
@@ -111,26 +111,24 @@ export class AppointmentManagement implements OnInit {
     switch (newStatus) {
       case 'CONFIRMED':
         request = this.appointmentService.confirmAppointment(item.id);
-
         break;
 
       case 'CANCELLED':
         request = this.appointmentService.cancelAppointment(item.id);
-
         break;
 
       case 'COMPLETED':
         request = this.appointmentService.completeAppointment(item.id);
+        break;
 
+      case 'NO_SHOW':
+        request = this.appointmentService.noshowAppointment(item.id);
         break;
 
       default:
         this.updating.set(false);
-
         this.errorMessage.set('This status is not supported by the available backend actions.');
-
         this.loadAppointments();
-
         return;
     }
 
