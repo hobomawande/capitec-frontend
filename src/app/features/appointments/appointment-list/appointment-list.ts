@@ -1,6 +1,6 @@
 
 import { Component, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +10,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AppointmentService } from '../../../core/services/appointment';
 import { AuthService } from '../../../core/services/auth';
 import { AppointmentResponse } from '../../../Models/appointment/AppointmentResponse';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { DatePipe } from '@angular/common';
 
 @Component({
   standalone: true,
@@ -19,6 +26,14 @@ import { AppointmentResponse } from '../../../Models/appointment/AppointmentResp
     MatChipsModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    RouterLink,
+    MatNativeDateModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatCardModule,
+    DatePipe,
   ],
   selector: 'app-appointment-list',
   styleUrl: './appointment-list.css',

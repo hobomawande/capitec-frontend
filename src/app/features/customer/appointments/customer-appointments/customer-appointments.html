@@ -1,71 +1,88 @@
 
 <div class="appointments-container">
 
-  <div class="page-header">
-    <div>
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <div class="eyebrow">
+        <mat-icon>event_note</mat-icon>
+        APPOINTMENT MANAGEMENT
+      </div>
+
       <h1>My Appointments</h1>
-      <p>Manage your Capitec appointment bookings.</p>
+      <p>Manage your bookings and stay on top of your banking visits.</p>
     </div>
 
     <a mat-flat-button
-       color="primary"
+       class="book-button"
        routerLink="/customer/appointments/book">
       <mat-icon>add</mat-icon>
-      Book Appointment
+      Book an Appointment
+      <mat-icon class="button-arrow">arrow_forward</mat-icon>
     </a>
-  </div>
+  </header>
 
-  <!-- Appointment Statistics -->
-  <div class="stats-grid">
+  <!-- Statistics -->
+  <section class="stats-grid">
 
-    <mat-card class="stat-card">
-      <mat-icon>calendar_month</mat-icon>
-      <div>
-        <p>Total Appointments</p>
+    <mat-card class="stat-card total-card">
+      <div class="stat-icon">
+        <mat-icon>calendar_month</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span>Total Appointments</span>
         <h2>{{ appointments().length }}</h2>
+        <small>All your bookings</small>
       </div>
     </mat-card>
 
-    <mat-card class="stat-card">
-      <mat-icon>event_available</mat-icon>
-      <div>
-        <p>Upcoming</p>
+    <mat-card class="stat-card upcoming-card">
+      <div class="stat-icon">
+        <mat-icon>event_available</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span>Upcoming</span>
         <h2>
           {{
             appointments().filter(a =>
-              a.appointmentDate >= (today.toString()) &&
+              a.appointmentDate >= today.toString() &&
               a.status !== 'CANCELLED' &&
               a.status !== 'COMPLETED'
             ).length
           }}
         </h2>
+        <small>Appointments ahead</small>
       </div>
     </mat-card>
 
-    <mat-card class="stat-card">
-      <mat-icon>check_circle</mat-icon>
-      <div>
-        <p>Completed</p>
+    <mat-card class="stat-card completed-card">
+      <div class="stat-icon">
+        <mat-icon>task_alt</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span>Completed</span>
         <h2>
-          {{
-            appointments().filter(a =>
-              a.status === 'COMPLETED'
-            ).length
-          }}
+          {{ appointments().filter(a => a.status === 'COMPLETED').length }}
         </h2>
+        <small>Successfully attended</small>
       </div>
     </mat-card>
 
-  </div>
+  </section>
 
   <!-- Search and Filters -->
   <mat-card class="filter-card">
+    <div class="filter-heading">
+      <div>
+        <h3>Your bookings</h3>
+        <p>Search and filter your appointments.</p>
+      </div>
+    </div>
 
     <div class="filter-controls">
 
       <div class="search-box">
         <mat-icon>search</mat-icon>
-
         <input
           type="text"
           placeholder="Search branch or reference..."
@@ -73,24 +90,25 @@
         />
       </div>
 
-      <select
-        [value]="selectedFilter()"
-        (change)="setFilter($any($event.target).value)">
-
-        <option value="ALL">All Appointments</option>
-        <option value="UPCOMING">Upcoming</option>
-        <option value="COMPLETED">Completed</option>
-        <option value="CANCELLED">Cancelled</option>
-
-      </select>
+      <div class="filter-select">
+        <mat-icon>filter_list</mat-icon>
+        <select
+          [value]="selectedFilter()"
+          (change)="setFilter($any($event.target).value)">
+          <option value="ALL">All Appointments</option>
+          <option value="UPCOMING">Upcoming</option>
+          <option value="COMPLETED">Completed</option>
+          <option value="CANCELLED">Cancelled</option>
+        </select>
+      </div>
 
     </div>
-
   </mat-card>
 
   <!-- Loading -->
   @if (loading()) {
     <mat-card class="message-card">
+      <mat-spinner diameter="35"></mat-spinner>
       <p>Loading your appointments...</p>
     </mat-card>
   }
@@ -98,21 +116,21 @@
   <!-- Error -->
   @if (errorMessage()) {
     <mat-card class="message-card error-message">
-      <mat-icon color="warn">error</mat-icon>
+      <mat-icon>error_outline</mat-icon>
+      <h3>Something went wrong</h3>
       <p>{{ errorMessage() }}</p>
 
-      <button mat-button
-              color="primary"
+      <button mat-flat-button color="primary"
               (click)="loadAppointments()">
         Try Again
       </button>
     </mat-card>
   }
 
-  <!-- Appointment List -->
+  <!-- Appointments -->
   @if (!loading() && !errorMessage()) {
 
-    <div class="appointment-list">
+    <section class="appointment-list">
 
       @for (appointment of filteredAppointments(); track appointment.id) {
 
@@ -120,72 +138,90 @@
 
           <div class="appointment-header">
 
-            <div>
-              <h3>{{ appointment.branchName }}</h3>
+            <div class="branch-info">
+              <div class="branch-icon">
+                <mat-icon>account_balance</mat-icon>
+              </div>
 
-              <p class="reference">
-                Reference: {{ appointment.appointmentReference }}
-              </p>
+              <div>
+                <h3>{{ appointment.branchName }}</h3>
+                <p class="reference">
+                  Reference:
+                  <strong>{{ appointment.appointmentReference }}</strong>
+                </p>
+              </div>
             </div>
 
-            <span
-              class="status-badge"
-              [ngClass]="getStatusClass(appointment.status)">
+            <span class="status-badge"
+                  [ngClass]="getStatusClass(appointment.status)">
+              <span class="status-dot"></span>
               {{ appointment.status }}
             </span>
 
           </div>
 
+          <div class="appointment-divider"></div>
+
           <div class="appointment-info">
 
-            <div>
-              <mat-icon>calendar_month</mat-icon>
-              <span>
-                {{ appointment.appointmentDate | date:'mediumDate' }}
-              </span>
+            <div class="info-item">
+              <div class="info-icon">
+                <mat-icon>calendar_today</mat-icon>
+              </div>
+              <div>
+                <small>Appointment date</small>
+                <strong>
+                  {{ appointment.appointmentDate | date:'mediumDate' }}
+                </strong>
+              </div>
             </div>
 
-            <div>
-              <mat-icon>schedule</mat-icon>
-              <span>{{ appointment.startTime }}</span>
+            <div class="info-item">
+              <div class="info-icon">
+                <mat-icon>schedule</mat-icon>
+              </div>
+              <div>
+                <small>Time</small>
+                <strong>{{ appointment.startTime }}</strong>
+              </div>
             </div>
 
-            <div>
-              <mat-icon>location_on</mat-icon>
-              <span>{{ appointment.province }}</span>
+            <div class="info-item">
+              <div class="info-icon">
+                <mat-icon>location_on</mat-icon>
+              </div>
+              <div>
+                <small>Province</small>
+                <strong>{{ appointment.province }}</strong>
+              </div>
             </div>
 
           </div>
 
           <div class="appointment-reason">
-            <strong>Reason:</strong>
-            {{ appointment.reason || 'Not specified' }}
+            <mat-icon>description</mat-icon>
+            <div>
+              <small>Appointment reason</small>
+              <p>{{ appointment.reason || 'Not specified' }}</p>
+            </div>
           </div>
 
           <div class="appointment-actions">
 
-            <button
-              mat-stroked-button
-              color="primary"
-              (click)="viewAppointment(appointment)">
-
+            <button mat-stroked-button
+                    class="details-button"
+                    (click)="viewAppointment(appointment)">
               <mat-icon>visibility</mat-icon>
               View Details
-
             </button>
 
             @if (canCancel(appointment)) {
-
-              <button
-                mat-stroked-button
-                color="warn"
-                (click)="cancelAppointment(appointment)">
-
-                <mat-icon>cancel</mat-icon>
+              <button mat-stroked-button
+                      class="cancel-button"
+                      (click)="cancelAppointment(appointment)">
+                <mat-icon>event_busy</mat-icon>
                 Cancel Appointment
-
               </button>
-
             }
 
           </div>
@@ -195,25 +231,26 @@
       } @empty {
 
         <mat-card class="empty-card">
-          <mat-icon>event_busy</mat-icon>
+          <div class="empty-icon">
+            <mat-icon>event_busy</mat-icon>
+          </div>
 
           <h3>No appointments found</h3>
-
           <p>
-            No appointments match your search or selected filter.
+            There are no appointments matching your search or selected filter.
           </p>
 
-          <button
-            mat-flat-button
-            color="primary"
-            routerLink="/customer/appointments/book">
-            Book an Appointment
-          </button>
+          <a mat-flat-button
+             color="primary"
+             routerLink="/customer/appointments/book">
+            <mat-icon>add</mat-icon>
+            Make an Appointment
+          </a>
         </mat-card>
 
       }
 
-    </div>
+    </section>
 
   }
 

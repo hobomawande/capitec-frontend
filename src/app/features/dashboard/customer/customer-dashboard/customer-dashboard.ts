@@ -37,7 +37,7 @@ export class CustomerDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.firstName = this.auth.getCurrentUser()?.firstName ?? 'Customer';
+    this.firstName = this.auth.getCurrentUser()?.fullName ?? 'Customer';
 
     this.loadAppointments();
   }

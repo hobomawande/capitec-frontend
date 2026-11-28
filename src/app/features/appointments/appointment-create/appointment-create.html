@@ -70,7 +70,7 @@
 
             <mat-select
               formControlName="branchId"
-              [disabled]="!bookingForm.controls.province.value || loading">
+              [disabled]="!bookingForm.controls.province.value || loading()">
 
               @for (branch of filteredBranches; track branch.id) {
                 <mat-option [value]="branch.id">
@@ -88,7 +88,7 @@
             }
           </mat-form-field>
 
-          @if (loading && branches.length === 0) {
+          @if (loading() && branches.length === 0) {
             <div class="info-message">
               <mat-spinner diameter="22"></mat-spinner>
               Loading branches...
@@ -96,7 +96,7 @@
           }
 
           @if (bookingForm.controls.province.value &&
-          filteredBranches.length === 0 && !loading) {
+          filteredBranches.length === 0 && !loading()) {
             <div class="info-message">
               <mat-icon>info</mat-icon>
               No active branches found in this province.
@@ -159,7 +159,7 @@
             <mat-label>Appointment Time</mat-label>
 
             <mat-select formControlName="appointmentTime">
-              @for (time of appointmentTimes; track time) {
+              @for (time of availableSlots(); track time) {
                 <mat-option [value]="time">
                   {{ time }}
                 </mat-option>
@@ -176,10 +176,10 @@
 
         </div>
 
-        @if (errorMessage) {
+        @if (errorMessage()) {
           <div class="error-message" role="alert">
             <mat-icon>error_outline</mat-icon>
-            {{ errorMessage }}
+            {{ errorMessage() }}
           </div>
         }
 
@@ -197,9 +197,9 @@
             mat-flat-button
             color="primary"
             type="submit"
-            [disabled]="loading">
+            [disabled]="loading()">
 
-            @if (loading) {
+            @if (loading()) {
               <ng-container>
                 <mat-spinner diameter="20"></mat-spinner>
                 Booking...

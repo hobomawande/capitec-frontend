@@ -13,6 +13,13 @@ import { AuthService } from '../../../../core/services/auth';
 import { RouterLink } from '@angular/router';
 import { MatDividerModule } from '@angular/material/divider';
 
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 @Component({
   standalone: true,
   imports: [
@@ -22,6 +29,12 @@ import { MatDividerModule } from '@angular/material/divider';
     MatIconModule,
     MatDividerModule,
     RouterLink,
+    MatFormFieldModule,
+    MatProgressSpinnerModule,
+    MatNativeDateModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatSelectModule,
   ],
   selector: 'app-customer-appointments',
   styleUrl: './customer-appointments.scss',

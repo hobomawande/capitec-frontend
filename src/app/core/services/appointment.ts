@@ -31,7 +31,8 @@ export class AppointmentService {
   }
 
   createAppointment(request: CreateAppointmentRequest): Observable<Appointment> {
-    return this.http.post<Appointment>(this.apiUrl, request);
+    return  this.http.post<Appointment>(this.apiUrl, request);
+
   }
 
   updateAppointment(id: string, request: UpdateAppointmentRequest): Observable<Appointment> {
