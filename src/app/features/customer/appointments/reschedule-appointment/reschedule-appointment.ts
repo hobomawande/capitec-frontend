@@ -17,6 +17,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { AppointmentService } from '../../../../core/services/appointment';
 import { AppointmentResponse } from '../../../../Models/appointment/AppointmentResponse';
 import { UpdateAppointmentRequest } from '../../../../Models/appointment/UpdateAppointmentRequest';
+import { AuthService } from '../../../../core/services/auth';
 
 @Component({
   standalone: true,
@@ -76,6 +77,7 @@ export class RescheduleAppointment implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private appointmentService: AppointmentService,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -224,9 +226,10 @@ export class RescheduleAppointment implements OnInit {
     }
 
     const request: UpdateAppointmentRequest = {
-      appointmentDate: selectedDate,
-      startTime: this.selectedTime,
-      serviceName: this.selectedServiceName,
+      appointmentDate : selectedDate,
+      startTime : this.selectedTime,
+      serviceName : this.selectedServiceName,
+      userId : this.authService.getCurrentUser().staffId
     };
 
     this.saving.set(true);

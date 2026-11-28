@@ -16,6 +16,8 @@ import { MatSelectChange } from '@angular/material/select';
 import { AppointmentService } from '../../../../core/services/appointment';
 import { AppointmentResponse } from '../../../../Models/appointment/AppointmentResponse';
 import { AppointmentStatus } from '../../../../Models/appointment/AppointmentStatus';
+import { AppointmentsUpdate } from '../../../../Models/appointment/AppointmentsUpdate';
+import { AuthService } from '../../../../core/services/auth';
 
 @Component({
   standalone: true,
@@ -62,6 +64,7 @@ export class AppointmentManagement implements OnInit {
   constructor(
     private appointmentService: AppointmentService,
     private router: Router,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -107,22 +110,26 @@ export class AppointmentManagement implements OnInit {
     this.successMessage.set('');
 
     let request;
+    var requesBody: AppointmentsUpdate = {
+      appointmentId : item.id,
+      userId : this.authService.getCurrentUser().staffId
+    }
 
     switch (newStatus) {
       case 'CONFIRMED':
-        request = this.appointmentService.confirmAppointment(item.id);
+        request = this.appointmentService.confirmAppointment(requesBody);
         break;
 
       case 'CANCELLED':
-        request = this.appointmentService.cancelAppointment(item.id);
+        request = this.appointmentService.cancelAppointment(requesBody);
         break;
 
       case 'COMPLETED':
-        request = this.appointmentService.completeAppointment(item.id);
+        request = this.appointmentService.completeAppointment(requesBody);
         break;
 
       case 'NO_SHOW':
-        request = this.appointmentService.noshowAppointment(item.id);
+        request = this.appointmentService.noshowAppointment(requesBody);
         break;
 
       default:
@@ -170,8 +177,11 @@ export class AppointmentManagement implements OnInit {
 
     this.errorMessage.set('');
     this.successMessage.set('');
-
-    this.appointmentService.deleteAppointment(appointment.id).subscribe({
+    var request: AppointmentsUpdate ={
+      appointmentId : appointment.id,
+      userId : this.authService.getCurrentUser().staffId,
+    }
+    this.appointmentService.deleteAppointment(request).subscribe({
       next: () => {
         this.updating.set(false);
 
