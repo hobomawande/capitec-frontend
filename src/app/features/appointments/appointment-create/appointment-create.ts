@@ -1,5 +1,5 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
@@ -19,6 +19,8 @@ import { Branch } from '../../../Models/branch/Branch';
 import { MatDividerModule } from '@angular/material/divider';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth';
+import { Appointment } from '../../../Models/appointment/Appointment';
+import { AppointmentResponse } from '../../../Models/appointment/AppointmentResponse';
 
 @Component({
   standalone: true,
@@ -44,10 +46,10 @@ import { AuthService } from '../../../core/services/auth';
 export class AppointmentCreateComponent implements OnInit {
   branches: Branch[] = [];
   filteredBranches: Branch[] = [];
-
-  loading = false;
-  errorMessage = '';
-
+  loading = signal(true);
+  errorMessage = signal('');
+  availableSlots = signal<string[]>([]);
+  error = signal('');
   provinces: string[] = [
     'Eastern Cape',
     'Free State',
@@ -66,18 +68,6 @@ export class AppointmentCreateComponent implements OnInit {
     'Account Enquiries',
     'Personal Loan Enquiries',
     'Other Banking Services',
-  ];
-
-  appointmentTimes: string[] = [
-    '08:00',
-    '09:00',
-    '10:00',
-    '11:00',
-    '12:00',
-    '13:00',
-    '14:00',
-    '15:00',
-    '16:00',
   ];
 
   bookingForm;
@@ -100,16 +90,23 @@ export class AppointmentCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadBranches();
+
+    this.bookingForm.get('appointmentDate')?.valueChanges.subscribe((selectedDate) => {
+      if (selectedDate) {
+        this.loadAvailableSlots();
+      }
+    });
+
   }
 
   loadBranches(): void {
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading.set(true);
+    this.errorMessage.set('');
 
     this.branchService.getActiveBranches().subscribe({
       next: (data) => {
         this.branches = data;
-        this.loading = false;
+        this.loading.set(false);
 
         const province = this.bookingForm.controls.province.value;
 
@@ -118,12 +115,59 @@ export class AppointmentCreateComponent implements OnInit {
         }
       },
       error: () => {
-        this.loading = false;
-        this.errorMessage = 'Unable to load branches.';
+        this.loading.set(false);
+        this.errorMessage.set('Unable to load branches.');
       },
     });
   }
+  loadAvailableSlots(): void {
 
+    this.appointmentService.getAllAppointments().subscribe({
+      next: (response) => {
+
+        const value = this.bookingForm.getRawValue();
+
+        const selectedDate: any = value.appointmentDate;
+        const date = selectedDate instanceof Date ? this.formatDate(selectedDate) : selectedDate;
+        var appointments: AppointmentResponse[] = response.filter(
+          (st) => st.customerId === this.authService.getCurrentUser()?.staffId && date === st.appointmentDate
+        );
+
+       let appointmentTimes:string[] = [
+          '08:00',
+          '09:00',
+          '10:00',
+          '11:00',
+          '12:00',
+          '13:00',
+          '14:00',
+          '15:00',
+          '16:00',
+        ];
+        appointments.forEach((appointment: AppointmentResponse) => {
+          if (
+            appointment.status != 'CANCELLED' &&
+            appointment.status != 'COMPLETED' &&
+            appointment.status != 'NO_SHOW'
+          ) {
+            console.log(appointment.appointmentDate);
+            console.log(appointment.startTime.substring(0, 5));
+            appointmentTimes = appointmentTimes.filter( (time) =>
+                time != appointment.startTime.substring(0, 5) ,
+            );
+          }
+        });
+
+        this.availableSlots.set(appointmentTimes);
+        this.loading.set(false);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        this.error.set('Unable to load appointment.');
+        this.loading.set(false);
+      },
+    });
+  }
   provinceChanged(): void {
     const province = this.bookingForm.controls.province.value;
 
@@ -155,8 +199,8 @@ export class AppointmentCreateComponent implements OnInit {
 
     const date = selectedDate instanceof Date ? this.formatDate(selectedDate) : selectedDate;
 
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading.set(true);
+    this.errorMessage.set('');
 
     const request = {
       branchId: value.branchId,
@@ -169,12 +213,12 @@ export class AppointmentCreateComponent implements OnInit {
     // @ts-ignore
     this.appointmentService.createAppointment(request).subscribe({
       next: (response) => {
-        this.loading = false;
+        this.loading.set(false);
         this.router.navigate(['/customer/appointments', response.id]);
       },
       error: (error) => {
-        this.loading = false;
-        this.errorMessage = error.error?.message || 'Appointment booking failed.';
+        this.loading.set(false);
+        this.errorMessage.set(error.error?.message || 'Appointment booking failed.');
       },
     });
   }

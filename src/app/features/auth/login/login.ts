@@ -56,6 +56,7 @@ export class LoginComponent {
 
     this.auth.login(this.loginForm.getRawValue()).subscribe({
       next: (response) => {
+        debugger
         this.loading.set(false);
 
         if (!response || !response.role) {
@@ -88,6 +89,7 @@ export class LoginComponent {
       },
 
       error: (error: HttpErrorResponse) => {
+        debugger
         this.loading.set(false);
 
         if (error.status === 0) {

@@ -380,7 +380,5 @@ table {
   z-index: 1000;
   margin-top: -28px;
   border-radius: 0 0 16px 16px;
-
-// Keep the header visible while scrolling
 width: 100%;
 }

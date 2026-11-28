@@ -1,208 +1,276 @@
 
-<div class="page-header">
+<div class="appointments-page">
 
-  <div>
-    <h1>
-      {{ isAdmin ? 'Appointment Management' : 'My Appointments' }}
-    </h1>
+  <!-- Page Header -->
+  <header class="page-header">
 
-    <p>
-      {{ isAdmin
-      ? 'Manage customer appointments'
-      : 'View and manage your booked appointments'
-      }}
-    </p>
-  </div>
+    <div class="header-left">
+      <div class="page-eyebrow">
+        <mat-icon>calendar_month</mat-icon>
+        APPOINTMENT CENTRE
+      </div>
 
-  <div class="header-actions">
+      <h1>
+        {{ isAdmin ? 'Appointment Management' : 'My Appointments' }}
+      </h1>
 
-    <button
-      mat-stroked-button
-      color="primary"
-      (click)="goToDashboard()">
-
-      <mat-icon>arrow_back</mat-icon>
-      Back to Dashboard
-
-    </button>
-  </div>
-
-</div>
-
-
-<div class="table-card">
-
-  @if (loading()) {
-
-    <div class="loading-state">
-      <mat-spinner diameter="40"></mat-spinner>
-      <p>Loading appointments...</p>
+      <p>
+        {{ isAdmin
+        ? 'Manage, monitor and coordinate customer appointments.'
+        : 'View and manage your booked appointments in one place.'
+        }}
+      </p>
     </div>
 
-  } @else {
+    <div class="header-actions">
+      <button
+        mat-stroked-button
+        class="back-button"
+        (click)="goToDashboard()">
 
-    @if (errorMessage()) {
-      <div class="error-message">
-        <mat-icon>error_outline</mat-icon>
-        {{ errorMessage() }}
+        <mat-icon>arrow_back</mat-icon>
+        Back to Dashboard
+
+      </button>
+    </div>
+
+  </header>
+
+  <!-- Main Content -->
+  <section class="table-card">
+
+    <!-- Table Header -->
+    <div class="table-card-header">
+      <div>
+        <div class="table-title">
+          <mat-icon>event_note</mat-icon>
+          <h2>Appointment Records</h2>
+        </div>
+
+        <p>
+          {{ isAdmin
+          ? 'View and manage all customer bookings.'
+          : 'Your appointment booking history.'
+          }}
+        </p>
       </div>
-    }
 
-    @if (successMessage()) {
-      <div class="success-message">
-        <mat-icon>check_circle</mat-icon>
-        {{ successMessage() }}
-      </div>
-    }
-
-    @if (appointments().length === 0) {
-
-      <div class="empty-state">
+      <div class="record-count">
         <mat-icon>calendar_today</mat-icon>
+        <span>{{ appointments().length }} Records</span>
+      </div>
+    </div>
 
-        <h3>No appointments found</h3>
+    <!-- Loading -->
+    @if (loading()) {
 
-        <p>Your appointments will appear here.</p>
-
-        @if (!isAdmin) {
-          <button
-            mat-flat-button
-            color="primary"
-            routerLink="/customer/appointments/book">
-
-            <mat-icon>add</mat-icon>
-            Book an Appointment
-
-          </button>
-        }
+      <div class="loading-state">
+        <mat-spinner diameter="42"></mat-spinner>
+        <h3>Loading appointments</h3>
+        <p>Please wait while we retrieve your appointment records.</p>
       </div>
 
     } @else {
 
-      <div class="table-container">
+      <!-- Error -->
+      @if (errorMessage()) {
+        <div class="alert-message error-message">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
 
-        <table mat-table [dataSource]="appointments()">
+      <!-- Success -->
+      @if (successMessage()) {
+        <div class="alert-message success-message">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ successMessage() }}</span>
+        </div>
+      }
 
-          <!-- Reference -->
-          <ng-container matColumnDef="referenceNumber">
-            <th mat-header-cell *matHeaderCellDef>Reference</th>
-            <td mat-cell *matCellDef="let item">
-              {{ item.appointmentReference || item.id }}
-            </td>
-          </ng-container>
+      <!-- Empty State -->
+      @if (appointments().length === 0) {
 
-          <!-- Branch -->
-          <ng-container matColumnDef="branchName">
-            <th mat-header-cell *matHeaderCellDef>Branch</th>
-            <td mat-cell *matCellDef="let item">
-              {{ item.branchName }}
-            </td>
-          </ng-container>
+        <div class="empty-state">
+          <div class="empty-icon">
+            <mat-icon>event_busy</mat-icon>
+          </div>
 
-          <!-- Service -->
-          <ng-container matColumnDef="serviceName">
-            <th mat-header-cell *matHeaderCellDef>Service</th>
-            <td mat-cell *matCellDef="let item">
-              {{ item.reason }}
-            </td>
-          </ng-container>
+          <h3>No appointments found</h3>
 
-          <!-- Date -->
-          <ng-container matColumnDef="appointmentDate">
-            <th mat-header-cell *matHeaderCellDef>Date</th>
-            <td mat-cell *matCellDef="let item">
-              {{ item.appointmentDate }}
-            </td>
-          </ng-container>
+          <p>
+            There are currently no appointment records to display.
+            Your appointments will appear here once available.
+          </p>
 
-          <!-- Time -->
-          <ng-container matColumnDef="appointmentTime">
-            <th mat-header-cell *matHeaderCellDef>Time</th>
-            <td mat-cell *matCellDef="let item">
-              {{ item.startTime }}
-            </td>
-          </ng-container>
+          @if (!isAdmin) {
+            <a mat-flat-button
+               class="primary-action"
+               routerLink="/customer/appointments/book">
+              <mat-icon>add</mat-icon>
+              Make an Appointment
+            </a>
+          }
+        </div>
 
-          <!-- Status -->
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>Status</th>
-            <td mat-cell *matCellDef="let item">
+      } @else {
 
-              <mat-chip
-                [color]="getStatusColor(item.status)"
-                highlighted>
+        <!-- Appointment Table -->
+        <div class="table-container">
 
-                {{ item.status }}
+          <table mat-table [dataSource]="appointments()" class="appointments-table">
 
-              </mat-chip>
+            <!-- Reference -->
+            <ng-container matColumnDef="referenceNumber">
+              <th mat-header-cell *matHeaderCellDef>REFERENCE</th>
 
-            </td>
-          </ng-container>
+              <td mat-cell *matCellDef="let item">
+                <div class="reference-cell">
+                  <div class="cell-icon reference-icon">
+                    <mat-icon>tag</mat-icon>
+                  </div>
 
-          <!-- Actions -->
-          <ng-container matColumnDef="actions">
+                  <span>
+                    {{ item.appointmentReference || item.id }}
+                  </span>
+                </div>
+              </td>
+            </ng-container>
 
-            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <!-- Branch -->
+            <ng-container matColumnDef="branchName">
+              <th mat-header-cell *matHeaderCellDef>BRANCH</th>
 
-            <td mat-cell *matCellDef="let item">
+              <td mat-cell *matCellDef="let item">
+                <div class="branch-cell">
+                  <div class="cell-icon branch-icon">
+                    <mat-icon>account_balance</mat-icon>
+                  </div>
 
-              <div class="action-buttons">
+                  <span>{{ item.branchName }}</span>
+                </div>
+              </td>
+            </ng-container>
 
-                <button
-                  mat-icon-button
-                  color="primary"
-                  matTooltip="View appointment details"
-                  (click)="viewAppointment(item)">
+            <!-- Service -->
+            <ng-container matColumnDef="serviceName">
+              <th mat-header-cell *matHeaderCellDef>SERVICE</th>
 
-                  <mat-icon>visibility</mat-icon>
+              <td mat-cell *matCellDef="let item">
+                <span class="service-name">
+                  {{ item.reason || 'General enquiry' }}
+                </span>
+              </td>
+            </ng-container>
 
-                </button>
+            <!-- Date -->
+            <ng-container matColumnDef="appointmentDate">
+              <th mat-header-cell *matHeaderCellDef>DATE</th>
 
-                @if (canManageAppointment(item)) {
+              <td mat-cell *matCellDef="let item">
+                <div class="date-cell">
+                  <mat-icon>calendar_today</mat-icon>
+                  <span>{{ item.appointmentDate | date:'dd MMM yyyy' }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Time -->
+            <ng-container matColumnDef="appointmentTime">
+              <th mat-header-cell *matHeaderCellDef>TIME</th>
+
+              <td mat-cell *matCellDef="let item">
+                <div class="time-cell">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{ item.startTime }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Status -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>STATUS</th>
+
+              <td mat-cell *matCellDef="let item">
+                <mat-chip
+                  class="status-chip"
+                  [color]="getStatusColor(item.status)"
+                  highlighted>
+                  {{ item.status }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+
+              <th mat-header-cell *matHeaderCellDef>ACTIONS</th>
+
+              <td mat-cell *matCellDef="let item">
+
+                <div class="action-buttons">
 
                   <button
                     mat-icon-button
-                    color="primary"
-                    matTooltip="Reschedule appointment"
-                    (click)="rescheduleAppointment(item)">
-
-                    <mat-icon>edit_calendar</mat-icon>
-
+                    class="view-action"
+                    matTooltip="View appointment details"
+                    (click)="viewAppointment(item)">
+                    <mat-icon>visibility</mat-icon>
                   </button>
 
-                  <button
-                    mat-icon-button
-                    color="warn"
-                    matTooltip="Cancel appointment"
-                    (click)="cancelAppointment(item)">
+                  @if (canManageAppointment(item)) {
 
-                    <mat-icon>cancel</mat-icon>
+                    <button
+                      mat-icon-button
+                      class="edit-action"
+                      matTooltip="Reschedule appointment"
+                      (click)="rescheduleAppointment(item)">
+                      <mat-icon>edit_calendar</mat-icon>
+                    </button>
 
-                  </button>
+                    <button
+                      mat-icon-button
+                      class="cancel-action"
+                      matTooltip="Cancel appointment"
+                      (click)="cancelAppointment(item)">
+                      <mat-icon>cancel</mat-icon>
+                    </button>
 
-                }
+                  }
 
-              </div>
+                </div>
 
-            </td>
+              </td>
 
-          </ng-container>
+            </ng-container>
 
-          <tr mat-header-row
-              *matHeaderRowDef="displayedColumns">
-          </tr>
+            <!-- Table Rows -->
+            <tr mat-header-row
+                *matHeaderRowDef="displayedColumns">
+            </tr>
 
-          <tr mat-row
-              *matRowDef="let row; columns: displayedColumns">
-          </tr>
+            <tr mat-row
+                *matRowDef="let row; columns: displayedColumns">
+            </tr>
 
-        </table>
+          </table>
 
-      </div>
+        </div>
+
+        <!-- Table Footer -->
+        <div class="table-footer">
+          <div class="footer-indicator">
+            <span class="online-dot"></span>
+            Appointment records loaded successfully
+          </div>
+
+          <span>{{ appointments().length }} total appointments</span>
+        </div>
+
+      }
 
     }
 
-  }
+  </section>
 
 </div>
-
